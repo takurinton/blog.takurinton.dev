@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <>
       <section class={styles.home}>
-        home
+        記事一覧
         {sortPosts(posts).map((post) => (
           <div>
             <a href={`/post/${post.id}`}>{post.title}</a>

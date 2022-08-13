@@ -1,4 +1,9 @@
 .home {
-	background: #f6f6f6;
-	color: #333;
+  color: #333;
+}
+
+a {
+  color: #ff69b4;
+  font-weight: 700;
+  text-decoration: none;
 }

@@ -4,7 +4,7 @@ export default function Header() {
   return (
     <header>
       <nav>
-        <a href="/">Home</a>
+        <a href="/">blog.takurinton.dev</a>
       </nav>
     </header>
   );
