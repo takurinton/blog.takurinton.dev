@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./public",
+    "paths": {
+      "lib/*": ["foo/lib/*"]
+    },
+    "jsx": "react",
+    "jsxFactory": "h",
+    "lib": ["ES2022"]
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}
