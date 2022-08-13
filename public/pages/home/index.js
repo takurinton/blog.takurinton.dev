@@ -25,7 +25,7 @@ export default function Home() {
         記事一覧
         {sortPosts(posts).map((post) => (
           <div>
-            <a href={`/post/${post.id}`}>{post.title}</a>
+            <a href={`/post/${post.id}`}>{post.title}</a>({post.created_at})
           </div>
         ))}
       </section>
