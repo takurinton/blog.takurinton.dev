@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "wmr",
     "build": "NODE_ENV=production wmr build --prerender",
-    "serve": "wmr serve"
+    "serve": "wmr serve",
+    "gen": "node ./scripts/gen-template.js"
   },
   "alias": {
     "react": "preact/compat"
