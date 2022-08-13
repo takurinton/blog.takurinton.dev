@@ -1,5 +1,5 @@
 import { marked } from "marked";
-// import highlightjs from "highlight.js";
+import highlightjs from "highlight.js";
 
 export const markdownStyle = () => {
   const r = new marked.Renderer();
@@ -58,8 +58,8 @@ export const markdownStyle = () => {
 export const markdown = (md: string): string => {
   return marked.parse(md, {
     renderer: markdownStyle(),
-    // highlight: (code, lang) => {
-    //   return highlightjs.highlightAuto(code, [lang]).value;
-    // },
+    highlight: (code, lang) => {
+      return highlightjs.highlightAuto(code, [lang]).value;
+    },
   });
 };
