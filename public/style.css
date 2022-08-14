@@ -1,6 +1,6 @@
 :root {
   --color-brand: #ff69b4;
-  --color-brand-light: #f1e9ff;
+  --color-brand-light: #3391ff;
 }
 
 html,
@@ -17,17 +17,17 @@ header {
 header > nav {
   flex: 1;
   display: flex;
-  font-size: 1.5rem;
+  align-items: center;
+  justify-content: right;
 }
 
 header > nav a {
-  padding: 10px;
   color: var(--color-brand);
   text-decoration: none;
 }
 
-header > nav a:hover {
-  background-color: var(--color-brand-light);
+a:hover {
+  color: var(--color-brand-light);
 }
 
 header > label {
@@ -43,6 +43,16 @@ header input {
   border-radius: 3px;
   padding: 2px 5px;
   font-size: 100%;
+}
+
+header .title {
+  font-size: 1.5rem;
+  padding: 10px;
+}
+
+header .sub {
+  font-size: 1rem;
+  padding: 5px;
 }
 
 .app > section {
