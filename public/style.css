@@ -18,6 +18,7 @@ header > nav {
   flex: 1;
   display: flex;
   align-items: center;
+  padding: 24px;
   justify-content: right;
 }
 
@@ -47,12 +48,12 @@ header input {
 
 header .title {
   font-size: 1.5rem;
-  padding: 10px;
+  padding: 24px;
 }
 
 header .sub {
   font-size: 1rem;
-  padding: 5px;
+  padding: 8px;
 }
 
 .app > section {
