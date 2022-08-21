@@ -31,7 +31,10 @@ h2 {
 
   p,
   a,
-  li,
+  li {
+    font-size: 1rem;
+  }
+
   code,
   pre,
   span {
