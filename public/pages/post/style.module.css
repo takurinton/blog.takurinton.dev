@@ -2,6 +2,24 @@
   margin: 0px 20%;
 }
 
+.title {
+  text-align: center;
+}
+
+.date {
+  text-align: right;
+}
+
+h1 {
+  font-size: 1.6rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+  padding-bottom: 2px;
+  border-bottom: 1.2px solid #ccc;
+}
+
 @media screen and (max-width: 768px) {
   h1 {
     font-size: 1.5rem;
