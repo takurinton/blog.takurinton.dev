@@ -1,0 +1,12 @@
+# とりあえずこれだけで行けるのか？
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
+    reviewers:
+      - "takurinton"
