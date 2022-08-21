@@ -6,16 +6,24 @@
   h1 {
     font-size: 1.5rem;
   }
+
   h2 {
     font-size: 1.2rem;
   }
+
   p,
   a,
   li,
   code,
-  pre {
+  pre,
+  span {
     font-size: 0.8rem;
   }
+
+  .language-js {
+    font-size: 0.8rem;
+  }
+
   .content {
     margin: 0px 5%;
   }
