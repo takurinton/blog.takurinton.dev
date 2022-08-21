@@ -3,6 +3,12 @@
   --color-brand-light: #3391ff;
 }
 
+a {
+  font-weight: 700;
+  color: var(--color-brand);
+  text-decoration: none;
+}
+
 html,
 body {
   margin: 0;
