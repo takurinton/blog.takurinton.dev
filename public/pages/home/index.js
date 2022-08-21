@@ -1,6 +1,6 @@
-import { useMeta, useTitle } from "hoofd/preact";
 import styles from "./style.module.css";
 import posts from "../../contents/posts.json";
+import { useMetas } from "src/hooks/useMetas";
 
 const sortPosts = (posts) => {
   return posts
@@ -13,11 +13,7 @@ const sortPosts = (posts) => {
 export default function Home() {
   const title = "takurinton | Home";
   const description = `takurinton のブログです`;
-  useTitle(title);
-  useMeta({ property: "og:title", content: title });
-  useMeta({ property: "twitter:title", content: title });
-  useMeta({ property: "og:description", content: description });
-  useMeta({ property: "twitter:description", content: description });
+  useMetas({ title, description });
 
   return (
     <>

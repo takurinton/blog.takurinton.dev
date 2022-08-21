@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./public",
+    "baseUrl": "./",
     "paths": {
       "lib/*": ["foo/lib/*"]
     },
