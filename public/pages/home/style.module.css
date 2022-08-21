@@ -1,9 +1,52 @@
 .home {
   color: #333;
+  margin: 0px 20%;
 }
 
-a {
-  color: #ff69b4;
+.headingcontainer {
+  text-align: center;
+}
+
+.heading {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.post {
+  position: relative;
+  height: 50px;
+  margin-top: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ccc;
+}
+
+.title {
+  position: absolute;
+  color: var(--color-brand);
   font-weight: 700;
   text-decoration: none;
+  font-size: 1.6rem;
+  bottom: 10px;
+}
+
+.date {
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+  font-size: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .home {
+    margin: 0;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .date {
+    font-size: 0.8rem;
+  }
 }

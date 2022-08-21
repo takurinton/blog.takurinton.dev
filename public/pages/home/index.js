@@ -22,10 +22,15 @@ export default function Home() {
   return (
     <>
       <section class={styles.home}>
-        記事一覧
+        <div class={styles.headingcontainer}>
+          <h1 class={styles.heading}>記事一覧</h1>
+        </div>
         {sortPosts(posts).map((post) => (
-          <div>
-            <a href={`/post/${post.id}`}>{post.title}</a>({post.created_at})
+          <div class={styles.post}>
+            <a class={styles.title} href={`/post/${post.id}`}>
+              {post.title}
+            </a>
+            <span class={styles.date}>{post.created_at}</span>
           </div>
         ))}
       </section>

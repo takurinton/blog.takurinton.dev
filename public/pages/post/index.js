@@ -64,9 +64,9 @@ export default function Post() {
   }, []);
 
   return (
-    <div style={{ padding: "10%" }}>
-      <h1 style={{ textAlign: "center" }}>{title}</h1>
-      <p style={{ textAlign: "right" }}>{createdAt}</p>
+    <div class={styles.content}>
+      <h1 class={styles.title}>{title}</h1>
+      <p class={styles.date}>{createdAt}</p>
       <div dangerouslySetInnerHTML={{ __html: content }} />
     </div>
   );

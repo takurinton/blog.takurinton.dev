@@ -1,0 +1,51 @@
+.content {
+  margin: 0px 20%;
+}
+
+.title {
+  text-align: center;
+}
+
+.date {
+  text-align: right;
+}
+
+h1 {
+  font-size: 1.6rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+  padding-bottom: 2px;
+  border-bottom: 1.2px solid #ccc;
+}
+
+@media screen and (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  p,
+  a,
+  li {
+    font-size: 1rem;
+  }
+
+  code,
+  pre,
+  span {
+    font-size: 0.8rem;
+  }
+
+  .language-js {
+    font-size: 0.8rem;
+  }
+
+  .content {
+    margin: 0px 5%;
+  }
+}
