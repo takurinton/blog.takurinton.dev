@@ -11,8 +11,6 @@ async function init() {
       fs.readFile(`dist/${String(url).replace(/^\//, "")}`, "utf-8");
     return { text, json: () => text().then(JSON.parse) };
   };
-
-  globalThis.DOMParser = new (require("jsdom").JSDOM)("").window.DOMParser;
 }
 
 export async function prerender(vnode: VNode) {

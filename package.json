@@ -14,13 +14,10 @@
   "devDependencies": {
     "@types/marked": "4.0.1",
     "@types/node": "^18.7.2",
-    "cross-env": "^7.0.3",
     "wmr": "3.7.2"
   },
   "dependencies": {
-    "highlight.js": "10.7.3",
     "hoofd": "^1.2.2",
-    "jsdom": "^20.0.0",
     "marked": "4.0.10",
     "preact": "^10.5.13",
     "preact-iso": "2.3.0"
