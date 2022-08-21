@@ -1,10 +1,10 @@
+import { useMeta, useTitle } from "hoofd";
 import { useRoute } from "preact-iso";
 import styles from "./style.module.css";
 import { MarkdownInit, markdown } from "src/md";
 import { useEffect } from "preact/hooks";
 import { usePost } from "src/hooks/usePost";
 import { setupHighlightjs } from "src/utils/setupHighlightjs";
-import { setMetas } from "src/utils/setMetas";
 
 export default function Post() {
   const { params } = useRoute();
@@ -15,7 +15,11 @@ export default function Post() {
   const content = markdown(md.getContent());
   const createdAt = md.getCreatedAt();
   const description = `${title} について書きました。`;
-  setMetas({ title, description });
+  useTitle(title);
+  useMeta({ name: "og:title", content: `takurinton | ${title}` });
+  useMeta({ property: "twitter:title", content: `takurinton | ${title}` });
+  useMeta({ name: "og:description", content: description });
+  useMeta({ property: "twitter:description", content: description });
 
   useEffect(() => {
     setupHighlightjs();
