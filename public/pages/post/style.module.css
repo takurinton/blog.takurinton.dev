@@ -1,0 +1,22 @@
+.content {
+  margin: 0px 20%;
+}
+
+@media screen and (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+  h2 {
+    font-size: 1.2rem;
+  }
+  p,
+  a,
+  li,
+  code,
+  pre {
+    font-size: 0.8rem;
+  }
+  .content {
+    margin: 0px 5%;
+  }
+}
