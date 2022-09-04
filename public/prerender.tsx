@@ -30,9 +30,6 @@ export async function prerender(vnode: VNode) {
 
   return {
     ...res,
-    // data: {
-    //   hello: "world",
-    // },
     head: {
       title: head.title,
       lang: "en",

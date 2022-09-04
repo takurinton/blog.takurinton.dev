@@ -1,4 +1,2 @@
-import { MarkdownInit } from "./markdown-init";
-import { markdown } from "./markdown";
-
-export { MarkdownInit, markdown };
+export { MarkdownInit } from "./markdown-init";
+export { markdown } from "./markdown";

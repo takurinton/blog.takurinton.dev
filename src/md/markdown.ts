@@ -1,5 +1,4 @@
 import { marked } from "marked";
-// import highlightjs from "highlight.js";
 
 export const markdownStyle = () => {
   const r = new marked.Renderer();
@@ -56,12 +55,6 @@ export const markdownStyle = () => {
 // TODO: rintonmd
 // https://github.com/takurinton/rintonmd
 export const markdown = (md: string): string => {
-  // marked.setOptions({
-  //   highlight: (code, lang) => {
-  //     console.log(lang);
-  //     return highlightjs.highlightAuto(code, [lang]).value;
-  //   },
-  // });
   const renderer: marked.Renderer = markdownStyle();
   return marked(md, { renderer });
 };

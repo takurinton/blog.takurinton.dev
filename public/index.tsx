@@ -11,6 +11,7 @@ import { h } from "preact";
 
 const Home = lazy(() => import("./pages/home"));
 const Post = lazy(() => import("./pages/post"));
+
 function showLoading() {
   document.body.classList.add("loading");
 }
@@ -39,11 +40,10 @@ if (typeof window !== "undefined") {
   hydrate(<App />, document.body);
 }
 
-export async function prerender(data) {
-  return (await import("./prerender.js")).prerender(<App {...data} />);
+export async function prerender() {
+  return (await import("./prerender.js")).prerender(<App />);
 }
 
-// @ts-ignore
-if (module.hot)
-  // @ts-ignore
-  module.hot.accept((u) => hydrate(<u.module.App />, document.body));
+const m: GlobalNodeModule =
+  typeof module !== "undefined" ? module : ({} as any);
+if (m.hot) m.hot.accept((u) => hydrate(<u.module.App />, document.body));
