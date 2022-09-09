@@ -6,7 +6,8 @@
     },
     "jsx": "react",
     "jsxFactory": "h",
-    "lib": ["ES2022"]
+    "lib": ["ES2022"],
+    "noEmit": true
   },
   "include": ["**/*.ts", "**/*.tsx"]
 }
