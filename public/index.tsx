@@ -7,6 +7,8 @@ import {
 } from "preact-iso";
 import NotFound from "./pages/_404";
 import Header from "./header";
+
+// eslint-disable-next-line no-unused-vars
 import { h } from "preact";
 
 const Home = lazy(() => import("./pages/home"));
@@ -44,6 +46,8 @@ export async function prerender() {
   return (await import("./prerender.js")).prerender(<App />);
 }
 
+// eslint-disable-next-line no-undef
 const m: GlobalNodeModule =
+  // eslint-disable-next-line no-undef
   typeof module !== "undefined" ? module : ({} as any);
 if (m.hot) m.hot.accept((u) => hydrate(<u.module.App />, document.body));
