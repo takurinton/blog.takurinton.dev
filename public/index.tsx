@@ -8,6 +8,9 @@ import {
 import NotFound from "./pages/_404";
 import Header from "./header";
 
+// eslint-disable-next-line no-unused-vars
+import { h } from "preact";
+
 const Home = lazy(() => import("./pages/home"));
 const Post = lazy(() => import("./pages/post"));
 
