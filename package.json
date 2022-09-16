@@ -24,7 +24,7 @@
   "dependencies": {
     "hoofd": "^1.2.2",
     "marked": "4.0.10",
-    "preact": "^10.5.13",
+    "preact": "^10.11.0",
     "preact-iso": "2.3.0",
     "typescript": "4.8.3"
   },
