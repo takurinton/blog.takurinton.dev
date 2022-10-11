@@ -29,6 +29,7 @@ export default function Post() {
       });
     }
   }, []);
+
   return (
     <div class={styles.content}>
       <h1 class={styles.title}>{title}</h1>
