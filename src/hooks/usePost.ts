@@ -27,6 +27,7 @@ async function fetchPost(url?: string): Promise<FetchPost> {
 export function usePost(id: string): Response {
   const url = `/contents/${id}.md`;
   const [, setPost] = useState(0);
+  const [, setContent] = useState("");
   let post = CACHE.get(url);
   if (post === undefined) {
     post = fetchPost(url);
@@ -46,16 +47,21 @@ export function usePost(id: string): Response {
   if (post.value !== undefined) {
     const md = new MarkdownInit(post.value.mdStr);
     const title = md.getTitle();
-    const content = markdown(md.getContent());
+    // const content = markdown(md.getContent());
     const createdAt = md.getCreatedAt();
     const description = `${title} について書きました。`;
+
+    markdown(md.getContent()).then((value) => {
+      post.c = value;
+      setContent(value);
+    });
 
     return {
       id,
       title,
       description,
       createdAt,
-      content,
+      content: post.c ?? "",
     };
   }
   if (post.error !== undefined) throw new Error(post.error);
