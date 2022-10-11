@@ -6,6 +6,7 @@ const twitter = {
   start(src) {
     return src.match(/^@twitter\[.*\]$/)?.index;
   },
+  // eslint-disable-next-line no-unused-vars
   tokenizer(src, tokens) {
     const rule = /^@twitter\[(.*)\]/;
     const match = rule.exec(src);
