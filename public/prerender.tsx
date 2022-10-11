@@ -2,7 +2,17 @@ import { prerender as ssr } from "preact-iso";
 import { VNode } from "preact";
 import { toStatic } from "hoofd/preact";
 
+let initialized = false;
+async function init() {
+  globalThis.DOMParser = new (require("jsdom").JSDOM)("").window.DOMParser;
+}
+
 export async function prerender(vnode: VNode) {
+  if (!initialized) {
+    initialized = true;
+    await init();
+  }
+
   const res = await ssr(vnode);
 
   const head = toStatic();

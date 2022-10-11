@@ -43,13 +43,14 @@ export const getHtml = async (url) => {
   let html;
   const htmlString = await fetchExternalHtml(url);
 
-  if (typeof window === "undefined") {
-    const { JSDOM } = await import("jsdom");
-    const { document } = JSDOM(htmlString).window;
-    html = document;
-  } else {
-    html = new DOMParser().parseFromString(htmlString, "text/html");
-  }
+  html = new DOMParser().parseFromString(htmlString, "text/html");
+  //   if (typeof window === "undefined") {
+  //     const { JSDOM } = await import("jsdom");
+  //     const { document } = JSDOM(htmlString).window;
+  //     html = document;
+  //   } else {
+  //     html = new DOMParser().parseFromString(htmlString, "text/html");
+  //   }
 
   const { title, description, image } = getMetaTags(html, url);
 
