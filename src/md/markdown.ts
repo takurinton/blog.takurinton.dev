@@ -51,8 +51,8 @@ const renderer = {
 };
 
 export async function markdown(md: string) {
-  marked.use({ renderer, ...plugin });
+  marked.use({ renderer });
+  marked.use(plugin);
   const html = await marked.parse(md);
-  console.log(html);
   return html;
 }

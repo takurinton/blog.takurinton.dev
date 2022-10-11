@@ -1,15 +1,14 @@
 const getMetaTags = (html, link) => {
   const description = html.getElementsByName("description")[0];
-  const favicon =
-    html.querySelector('link[rel="icon"]') ??
-    html.querySelector('link[rel="shortcut icon"]');
+
+  const ogImage = html.querySelector('meta[property="og:image"]');
 
   const domain = link.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/)[1];
   let image;
-  if (favicon === undefined) {
+  if (ogImage === undefined) {
     image = "";
-  } else if (favicon.href.slice(0, 5) === "https") {
-    const file = favicon.href;
+  } else if (ogImage.content.slice(0, 5) === "https") {
+    const file = ogImage.content;
     const fileLink = file.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/);
 
     if (fileLink === null) image = `https://${domain}${file.slice(7)}`;
@@ -18,7 +17,7 @@ const getMetaTags = (html, link) => {
       image = `https://${fileLink[1]}/${filePathSplit}`;
     }
   } else {
-    const file = favicon.href;
+    const file = ogImage.content;
     const fileLink = file.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/);
     if (fileLink === null) image = `https://${domain}${file.slice(7)}`;
     else {
@@ -41,10 +40,20 @@ const fetchExternalHtml = async (url) => {
 };
 
 export const getHtml = async (url) => {
+  let html;
   const htmlString = await fetchExternalHtml(url);
-  const html = new DOMParser().parseFromString(htmlString, "text/html");
+
+  if (typeof window === "undefined") {
+    const { JSDOM } = await import("jsdom");
+    const { document } = JSDOM(htmlString).window;
+    html = document;
+  } else {
+    html = new DOMParser().parseFromString(htmlString, "text/html");
+  }
+
   const { title, description, image } = getMetaTags(html, url);
 
+  // TODO: 毎回スタイルがレンダリングされるのは無駄なので解消する
   return `<style>
   .og > a {
       border: 1px gray solid;
