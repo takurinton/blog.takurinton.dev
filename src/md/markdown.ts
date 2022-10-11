@@ -50,9 +50,9 @@ const renderer = {
   },
 };
 
-export const markdown = async (md: string) => {
+export async function markdown(md: string) {
   marked.use({ renderer, ...plugin });
   const html = await marked.parse(md);
   console.log(html);
   return html;
-};
+}
