@@ -17,6 +17,7 @@ const twitter = {
         id: match[1].split("/").pop(),
         tokens: [],
       };
+      // @ts-ignore
       this.lexer.inline(token.text, token.tokens);
       return token;
     }
