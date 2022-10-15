@@ -2,13 +2,14 @@ const getMetaTags = (html, link) => {
   const description = html.getElementsByName("description")[0];
 
   const ogImage = html.querySelector('meta[property="og:image"]');
+  const ogImageContent = ogImage ? ogImage.content : { content: "" };
 
   const domain = link.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/)[1];
   let image;
   if (ogImage === undefined) {
     image = "";
-  } else if (ogImage.content.slice(0, 5) === "https") {
-    const file = ogImage.content;
+  } else if (/^https?:\/\//.test(ogImageContent)) {
+    const file = ogImageContent;
     const fileLink = file.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/);
 
     if (fileLink === null) image = `https://${domain}${file.slice(7)}`;
@@ -17,7 +18,7 @@ const getMetaTags = (html, link) => {
       image = `https://${fileLink[1]}/${filePathSplit}`;
     }
   } else {
-    const file = ogImage.content;
+    const file = ogImageContent;
     const fileLink = file.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/);
     if (fileLink === null) image = `https://${domain}${file.slice(7)}`;
     else {
@@ -44,13 +45,6 @@ export const getHtml = async (url) => {
   const htmlString = await fetchExternalHtml(url);
 
   html = new DOMParser().parseFromString(htmlString, "text/html");
-  //   if (typeof window === "undefined") {
-  //     const { JSDOM } = await import("jsdom");
-  //     const { document } = JSDOM(htmlString).window;
-  //     html = document;
-  //   } else {
-  //     html = new DOMParser().parseFromString(htmlString, "text/html");
-  //   }
 
   const { title, description, image } = getMetaTags(html, url);
 
