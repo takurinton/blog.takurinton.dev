@@ -44,6 +44,7 @@ export const plugin = {
             type: "og",
             raw: match[0],
             url: match[1].trim(),
+            text: "",
             html: "",
             tokens: [],
           };
