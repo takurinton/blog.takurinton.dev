@@ -34,66 +34,22 @@ const getMetaTags = (html, link) => {
   };
 };
 
-// For Node.js version under 17.x
-// https://github.com/preactjs/wmr/pull/935#discussion_r978011776
-// const fetcher = typeof window === "undefined" ? globalThis._fetch : fetch;
-
 const fetchExternalHtml = async (url) => {
-  // const res = await fetcher(url);
   const res = await fetch(url);
   const html = await res.text();
   return html;
 };
 
-export const getHtml = async (url) => {
+export const setHtml = async (url, id) => {
   const htmlString = await fetchExternalHtml(url);
   const html = new DOMParser().parseFromString(htmlString, "text/html");
   const { title, description, image } = getMetaTags(html, url);
 
-  // TODO: 毎回スタイルがレンダリングされるのは無駄なので解消する
-  return `<style>
-  .og > a {
-      border: 1px gray solid;
-      border-radius: 5px;
-      width: 80%;
-      padding: 10px;
-      display: flex;
-      text-decoration: none;
-      color: #222222;
-  }
-  .left {
-      height: 100px;
-      width: 100px;
-      text-align: center;
-      padding-right: 40px;
-  }
-  .left > img {
-      height: 100px;
-      width: 100px;
-  }
-  .right {
-      display: block;
-      overflow: hidden;
-  }
-  .right > h1,
-  .right > p,
-  .right > a {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-  }
-  .right > h1 {
-      height: 50px;
-      margin: 0;
-  }
-  .right > p {
-      margin: 0;
-  }
-  .link { 
-      color: gray;
-  }
-  </style>
+  if (typeof window !== "undefined") {
+    const el = document.getElementById(id);
+    if (el === null) return;
+
+    el.innerHTML = `
   <div class="og">
   <a href="${url}" target="_blank" >
   <div class="left">
@@ -106,4 +62,53 @@ export const getHtml = async (url) => {
   </div>
   </a>
   </div>`;
+
+    const style = Object.assign(document.createElement("style"), {
+      innerHTML: `
+.og > a {
+  border: 1px gray solid;
+  border-radius: 5px;
+  width: 80%;
+  padding: 10px;
+  display: flex;
+  text-decoration: none;
+  color: #222222;
+}
+.left {
+    height: 100px;
+    width: 100px;
+    text-align: center;
+    padding-right: 40px;
+}
+.left > img {
+    height: 100px;
+    width: 100px;
+}
+.right {
+    display: block;
+    overflow: hidden;
+}
+.right > h1,
+.right > p,
+.right > a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.right > h1 {
+    height: 50px;
+    margin: 0;
+}
+.right > p {
+    margin: 0;
+}
+.link { 
+    color: gray;
+}
+  `,
+    });
+
+    document.head.appendChild(style);
+  }
 };

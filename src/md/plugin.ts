@@ -1,4 +1,4 @@
-import { getHtml } from "./getHtml";
+import { setHtml } from "./getHtml";
 
 export const plugin = {
   extensions: [
@@ -39,13 +39,14 @@ export const plugin = {
       tokenizer(src, tokens) {
         const rule = /^@og\[(.*)\]/;
         const match = rule.exec(src);
+        const id = Math.random().toString(36).slice(-8);
         if (match !== null) {
           const token = {
+            id,
             type: "og",
             raw: match[0],
             url: match[1].trim(),
-            text: "",
-            html: "",
+            html: `<div id="${id}"></div>`,
             tokens: [],
           };
           // @ts-ignore
@@ -58,11 +59,9 @@ export const plugin = {
       },
     },
   ],
-  async: true,
   async walkTokens(token) {
     if (token.type === "og") {
-      const html = await getHtml(token.url);
-      token.html = html;
+      await setHtml(token.url, token.id);
     }
   },
 };

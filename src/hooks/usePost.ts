@@ -37,14 +37,14 @@ export function usePost(id: string): Response {
         const title = md.getTitle();
         const createdAt = md.getCreatedAt();
         const description = `${title} について書きました。`;
-        post.value = {
-          id,
-          title,
-          description,
-          createdAt,
-        };
         markdown(md.getContent()).then((content) => {
-          post.value.content = content;
+          post.value = {
+            id,
+            title,
+            content,
+            description,
+            createdAt,
+          };
           setPost(post);
         });
       },
