@@ -4,6 +4,7 @@ import { toStatic } from "hoofd/preact";
 
 let initialized = false;
 async function init() {
+  // eslint-disable-next-line no-undef
   globalThis.DOMParser = new (require("jsdom").JSDOM)("").window.DOMParser;
 }
 
