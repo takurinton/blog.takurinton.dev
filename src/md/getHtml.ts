@@ -34,18 +34,20 @@ const getMetaTags = (html, link) => {
   };
 };
 
+// For Node.js version under 17.x
+// https://github.com/preactjs/wmr/pull/935#discussion_r978011776
+// const fetcher = typeof window === "undefined" ? globalThis._fetch : fetch;
+
 const fetchExternalHtml = async (url) => {
+  // const res = await fetcher(url);
   const res = await fetch(url);
   const html = await res.text();
   return html;
 };
 
 export const getHtml = async (url) => {
-  let html;
   const htmlString = await fetchExternalHtml(url);
-
-  html = new DOMParser().parseFromString(htmlString, "text/html");
-
+  const html = new DOMParser().parseFromString(htmlString, "text/html");
   const { title, description, image } = getMetaTags(html, url);
 
   // TODO: 毎回スタイルがレンダリングされるのは無駄なので解消する
