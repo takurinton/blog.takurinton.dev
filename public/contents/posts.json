@@ -358,6 +358,5 @@
     "title": "SHA-256 algorithm",
     "description": "SHA-256 algorithm について",
     "created_at": "2022-10-10"
-  },
-  { "id": 112, "title": "aa", "description": "aa", "created_at": "2022-10-11" }
+  }
 ]
