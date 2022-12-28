@@ -9,7 +9,7 @@ export const plugin = {
         return src.match(/^@twitter\[.*\]$/)?.index;
       },
       // eslint-disable-next-line no-unused-vars
-      tokenizer(src, tokens) {
+      tokenizer(src, _) {
         const rule = /^@twitter\[(.*)\]/;
         const match = rule.exec(src);
         if (match !== null) {
@@ -35,8 +35,7 @@ export const plugin = {
       start(src) {
         return src.match(/^@og\[(.*)\]/)?.index;
       },
-      // eslint-disable-next-line no-unused-vars
-      tokenizer(src, tokens) {
+      tokenizer(src, _) {
         const rule = /^@og\[(.*)\]/;
         const match = rule.exec(src);
         const id = Math.random().toString(36).slice(-8);
