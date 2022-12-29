@@ -59,7 +59,7 @@ export const plugin = {
     },
   ],
   async walkTokens(token) {
-    if (token.type === "og" && typeof window === "undefined") {
+    if (token.type === "og") {
       token.html = await getHtml(token.url);
     }
   },

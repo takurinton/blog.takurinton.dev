@@ -1,52 +1,18 @@
-const getMetaTags = (html, link) => {
-  const description = html.getElementsByName("description")[0];
-
-  const ogImage = html.querySelector('meta[property="og:image"]');
-  const ogImageContent = ogImage ? ogImage.content : "";
-
-  if (!link) return;
-
-  const domain = link.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/)[1];
-  let image;
-  if (ogImage === undefined) {
-    image = "";
-  } else if (/^https?:\/\//.test(ogImageContent)) {
-    const file = ogImageContent;
-    const fileLink = file.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/);
-
-    if (fileLink === null) image = `https://${domain}${file.slice(7)}`;
-    else if (fileLink[1] !== domain) {
-      const filePathSplit = file.split("/")[3];
-      image = `https://${fileLink[1]}/${filePathSplit}`;
-    }
-  } else {
-    const file = ogImageContent;
-    const fileLink = file.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/);
-    if (fileLink === null) {
-      image = `https://${domain}${file.slice(7)}`;
-    } else {
-      const filePathSplit = file.split("/").slice(3).join("/");
-      image = `https://${domain}/${filePathSplit}`;
-    }
+const getMetaTags = async (url) => {
+  if (!url) {
+    return {
+      title: "",
+      description: "",
+      image: "",
+    };
   }
-
-  return {
-    title: html.title,
-    description: description === undefined ? "" : description.content,
-    image: image ?? "",
-  };
-};
-
-const fetchExternalHtml = async (url) => {
-  const res = await fetch(url);
-  const html = await res.text();
-  return html;
+  const data = await fetch(`https://meta-tags-xi.vercel.app/api?url=${url}`);
+  const json = await data.json();
+  return json;
 };
 
 export const getHtml = async (url) => {
-  const htmlString = await fetchExternalHtml(url);
-  const html = new DOMParser().parseFromString(htmlString, "text/html");
-  const { title, description, image } = getMetaTags(html, url);
+  const { title, description, image } = await getMetaTags(url);
 
   return `
   <div class="og">
