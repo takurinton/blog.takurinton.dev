@@ -1,4 +1,4 @@
-import { setHtml } from "./getHtml";
+import { getHtml } from "./getHtml";
 
 export const plugin = {
   extensions: [
@@ -45,7 +45,7 @@ export const plugin = {
             type: "og",
             raw: match[0],
             url: match[1].trim(),
-            html: `<div id="${id}"></div>`,
+            html: "",
             tokens: [],
           };
           // @ts-ignore
@@ -59,8 +59,8 @@ export const plugin = {
     },
   ],
   async walkTokens(token) {
-    if (token.type === "og") {
-      await setHtml(token.url, token.id);
+    if (token.type === "og" && typeof window === "undefined") {
+      token.html = await getHtml(token.url);
     }
   },
 };
