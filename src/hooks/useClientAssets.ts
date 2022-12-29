@@ -1,4 +1,5 @@
 import { useEffect } from "preact/hooks";
+import { getHtml } from "src/md/getHtml";
 import { setupHighlightjs } from "src/utils/setupHighlightjs";
 import { setupTwitter } from "src/utils/setupTwitter";
 
@@ -30,13 +31,26 @@ export const useClientAssets = (content) => {
   }, []);
 
   useEffect(() => {
-    if (/<div class="og">/.test(content)) {
+    if (/<div class="og"/.test(content)) {
+      (async () => {
+        const og = document.getElementsByClassName("og");
+        Array.from(og).forEach((element) => {
+          const url = element
+            .querySelector("div[data-url]")
+            .getAttribute("data-url");
+          const id = element.id;
+          getHtml(url, id).then((html) => {
+            element.innerHTML = html;
+          });
+        });
+      })();
+
       if (!document.getElementById("og-style")) {
         const style = document.createElement("style");
         Object.assign(style, {
           id: "og-style",
           innerHTML: `
-            .og > a {
+            .og > .a {
               border: 1px gray solid;
               border-radius: 5px;
               width: 80%;
@@ -79,7 +93,6 @@ export const useClientAssets = (content) => {
             }
             `,
         });
-
         document.head.appendChild(style);
       }
     }
