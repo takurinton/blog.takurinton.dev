@@ -1,4 +1,4 @@
-import { setHtml } from "./getHtml";
+import { getHtml } from "./getHtml";
 
 export const plugin = {
   extensions: [
@@ -9,7 +9,7 @@ export const plugin = {
         return src.match(/^@twitter\[.*\]$/)?.index;
       },
       // eslint-disable-next-line no-unused-vars
-      tokenizer(src, tokens) {
+      tokenizer(src, _) {
         const rule = /^@twitter\[(.*)\]/;
         const match = rule.exec(src);
         if (match !== null) {
@@ -35,8 +35,7 @@ export const plugin = {
       start(src) {
         return src.match(/^@og\[(.*)\]/)?.index;
       },
-      // eslint-disable-next-line no-unused-vars
-      tokenizer(src, tokens) {
+      tokenizer(src, _) {
         const rule = /^@og\[(.*)\]/;
         const match = rule.exec(src);
         const id = Math.random().toString(36).slice(-8);
@@ -46,7 +45,7 @@ export const plugin = {
             type: "og",
             raw: match[0],
             url: match[1].trim(),
-            html: `<div id="${id}"></div>`,
+            html: "",
             tokens: [],
           };
           // @ts-ignore
@@ -61,7 +60,7 @@ export const plugin = {
   ],
   async walkTokens(token) {
     if (token.type === "og") {
-      await setHtml(token.url, token.id);
+      token.html = await getHtml(token.url);
     }
   },
 };

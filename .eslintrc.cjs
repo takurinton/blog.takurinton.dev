@@ -11,5 +11,13 @@ module.exports = {
     sourceType: "module",
   },
   plugins: [],
-  rules: {},
+  rules: {
+    "no-unused-vars": [
+      "error",
+      {
+        argsIgnorePattern: "^_",
+        destructuredArrayIgnorePattern: "^_",
+      },
+    ],
+  },
 };
