@@ -13,12 +13,12 @@ const getMetaTags = async (url) => {
   return json;
 };
 
-export const getHtml = async (url) => {
+export const getHtml = async (url, id) => {
   const { title, description, image } = await getMetaTags(url);
 
   return `
-  <div class="og">
-  <a href="${url}" target="_blank" >
+  <div class="og" id=${id}>
+  <a href="${url}" target="_blank" class="a">
   <div class="left">
       <img src="${image}" alt="${title}" />
   </div>
