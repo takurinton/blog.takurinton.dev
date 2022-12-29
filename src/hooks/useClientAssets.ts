@@ -60,6 +60,8 @@ export const useClientAssets = (content) => {
               color: #222222;
             }
             .left {
+                max-width: 100px;
+                min-width: 100px;
                 height: 100px;
                 width: 100px;
                 text-align: center;
