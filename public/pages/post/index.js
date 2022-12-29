@@ -31,8 +31,8 @@ export default function Post() {
   }, []);
 
   useEffect(() => {
-    if (/<div class="og" /.test(content)) {
-      if (!window.getElementById("og-style")) {
+    if (/<div class="og">/.test(content)) {
+      if (!document.getElementById("og-style")) {
         const style = document.createElement("style");
         Object.assign(style, {
           id: "og-style",
