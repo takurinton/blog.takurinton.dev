@@ -2,7 +2,9 @@ const getMetaTags = (html, link) => {
   const description = html.getElementsByName("description")[0];
 
   const ogImage = html.querySelector('meta[property="og:image"]');
-  const ogImageContent = ogImage ? ogImage.content : { content: "" };
+  const ogImageContent = ogImage ? ogImage.content : "";
+
+  if (!link) return;
 
   const domain = link.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/)[1];
   let image;
@@ -20,8 +22,9 @@ const getMetaTags = (html, link) => {
   } else {
     const file = ogImageContent;
     const fileLink = file.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/);
-    if (fileLink === null) image = `https://${domain}${file.slice(7)}`;
-    else {
+    if (fileLink === null) {
+      image = `https://${domain}${file.slice(7)}`;
+    } else {
       const filePathSplit = file.split("/").slice(3).join("/");
       image = `https://${domain}/${filePathSplit}`;
     }
@@ -40,16 +43,12 @@ const fetchExternalHtml = async (url) => {
   return html;
 };
 
-export const setHtml = async (url, id) => {
+export const getHtml = async (url) => {
   const htmlString = await fetchExternalHtml(url);
   const html = new DOMParser().parseFromString(htmlString, "text/html");
   const { title, description, image } = getMetaTags(html, url);
 
-  if (typeof window !== "undefined") {
-    const el = document.getElementById(id);
-    if (el === null) return;
-
-    el.innerHTML = `
+  return `
   <div class="og">
   <a href="${url}" target="_blank" >
   <div class="left">
@@ -61,54 +60,6 @@ export const setHtml = async (url, id) => {
       <p class="link">${url}</p>
   </div>
   </a>
-  </div>`;
-
-    const style = Object.assign(document.createElement("style"), {
-      innerHTML: `
-.og > a {
-  border: 1px gray solid;
-  border-radius: 5px;
-  width: 80%;
-  padding: 10px;
-  display: flex;
-  text-decoration: none;
-  color: #222222;
-}
-.left {
-    height: 100px;
-    width: 100px;
-    text-align: center;
-    padding-right: 40px;
-}
-.left > img {
-    height: 100px;
-    width: 100px;
-}
-.right {
-    display: block;
-    overflow: hidden;
-}
-.right > h1,
-.right > p,
-.right > a {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-.right > h1 {
-    height: 50px;
-    margin: 0;
-}
-.right > p {
-    margin: 0;
-}
-.link { 
-    color: gray;
-}
-  `,
-    });
-
-    document.head.appendChild(style);
-  }
+  </div>
+  `;
 };
