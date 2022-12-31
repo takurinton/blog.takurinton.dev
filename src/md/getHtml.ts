@@ -6,9 +6,7 @@ const getMetaTags = async (url) => {
       image: "",
     };
   }
-  const data = await fetch(
-    `https://meta-tags-takurinton.vercel.app/api/?url=${url}`
-  );
+  const data = await fetch(`https://meta.takur.in/api/?url=${url}`);
   const json = await data.json();
   return json;
 };
