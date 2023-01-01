@@ -13,10 +13,18 @@ export const setupClientAssets = () => {
       if (CACHE.has(url)) {
         element.innerHTML = CACHE.get(url);
       } else {
-        getHtml(url, element.id).then((html) => {
-          CACHE.set(url, html);
-          element.innerHTML = html;
-        });
+        getHtml(url, element.id)
+          .then((html) => {
+            CACHE.set(url, html);
+            element.innerHTML = html;
+          })
+          .catch((_) => {
+            element.innerHTML = `<div class="a">
+                <div class="right" style="height:100px">
+                    <h1 style="color:red">カードの取得に失敗しました。</h1>
+                </div>
+            </div>`;
+          });
       }
     });
   })();
