@@ -6,7 +6,6 @@ export const plugin = {
       start(src) {
         return src.match(/^@twitter\[.*\]$/)?.index;
       },
-      // eslint-disable-next-line no-unused-vars
       tokenizer(src, _) {
         const rule = /^@twitter\[(.*)\]/;
         const match = rule.exec(src);
@@ -18,7 +17,6 @@ export const plugin = {
             id: match[1].split("/").pop(),
             tokens: [],
           };
-          // @ts-ignore
           this.lexer.inline(token.text, token.tokens);
           return token;
         }
@@ -57,8 +55,7 @@ export const plugin = {
             `,
             tokens: [],
           };
-          // @ts-ignore
-          this.lexer.inline(token.text, token.tokens);
+          this.lexer.inline(token.url, token.tokens);
           return token;
         }
       },
