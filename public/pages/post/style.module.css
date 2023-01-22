@@ -20,6 +20,33 @@ h2 {
   border-bottom: 1.2px solid #ccc;
 }
 
+img {
+  max-width: 100%;
+}
+
+pre {
+  font-size: 16px;
+  padding: 10px;
+  overflow: auto;
+  background-color: #2c2d3a;
+  border-radius: 5px;
+  box-shadow: 2px 2px 6px rgb(255 255 255 / 25%);
+}
+pre > code {
+  font-weight: 500;
+  color: #ffffff;
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo",
+    monospace, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+}
+code {
+  font-weight: 500;
+  color: #222222;
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo",
+    monospace, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+}
+
 @media screen and (max-width: 768px) {
   h1 {
     font-size: 1.5rem;
