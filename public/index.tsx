@@ -1,18 +1,20 @@
 import {
   LocationProvider,
   Router,
-  lazy,
+  // lazy,
   ErrorBoundary,
   hydrate,
 } from "preact-iso";
 import NotFound from "./pages/_404";
 import Header from "./header";
+import Home from "./pages/home";
+import Post from "./pages/post";
 
 // eslint-disable-next-line no-unused-vars
 import { h } from "preact";
 
-const Home = lazy(() => import("./pages/home"));
-const Post = lazy(() => import("./pages/post"));
+// const Home = lazy(() => import("./pages/home"));
+// const Post = lazy(() => import("./pages/post"));
 
 function showLoading() {
   document.body.classList.add("loading");
