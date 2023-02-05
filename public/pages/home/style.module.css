@@ -1,6 +1,7 @@
 .home {
   color: #333;
   margin: var(--margin-none) 20%;
+  padding-bottom: var(--padding-xlarge);
 }
 
 .headingcontainer {
