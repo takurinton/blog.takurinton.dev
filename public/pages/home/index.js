@@ -23,7 +23,8 @@ export default function Home() {
           <a class={styles.title} href={`/post/${post.id}`}>
             {post.title}
           </a>
-          <span class={styles.date}>{post.created_at}</span>
+          <p class={styles.date}>{post.created_at}</p>
+          <p class={styles.description}>{post.description}</p>
         </div>
       ))}
     </section>

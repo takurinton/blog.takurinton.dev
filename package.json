@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "wmr",
-    "build": "tsc && NODE_ENV=production wmr build --prerender",
+    "dev": "yarn prebuild && wmr",
+    "build": "tsc && NODE_ENV=production && yarn prebuild && wmr build --prerender",
     "serve": "wmr serve",
     "lint": "eslint './**/*.{js,jsx,ts,tsx}'",
-    "gen": "node ./scripts/gen-template.js"
+    "gen": "node ./scripts/gen-template.js",
+    "prebuild": "node ./scripts/pre-build.js"
   },
   "alias": {
     "react": "preact/compat"

@@ -1,5 +1,5 @@
 .content {
-  margin: 0px 20% 80px;
+  margin: var(--margin-none) 20% var(--margin-xlarge);
 }
 
 .title {
@@ -11,19 +11,20 @@
 }
 
 h1 {
-  font-size: 1.6rem;
+  font-size: var(--font-size-xlarge);
 }
 
 h2 {
-  font-size: 1.4rem;
-  padding-bottom: 2px;
-  border-bottom: 1.2px solid #ccc;
+  font-size: var(--font-size-large);
+  padding-bottom: var(--padding-mini);
+  border-bottom: var(--border-bottom);
 }
 
 img {
-  max-width: 100%;
+  max-width: var(--width);
 }
 
+/* magic number ok */
 pre {
   font-size: 16px;
   padding: 10px;
@@ -33,15 +34,15 @@ pre {
   box-shadow: 2px 2px 6px rgb(255 255 255 / 25%);
 }
 pre > code {
-  font-weight: 500;
-  color: #ffffff;
+  font-weight: var(--font-weight-normal);
+  color: var(--color-white);
   font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo",
     monospace, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji";
 }
 code {
-  font-weight: 500;
-  color: #222222;
+  font-weight: var(--font-weight-normal);
+  color: var(--color-black);
   font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo",
     monospace, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji";
@@ -49,30 +50,30 @@ code {
 
 @media screen and (max-width: 768px) {
   h1 {
-    font-size: 1.5rem;
+    font-size: var(--font-size-xlarge);
   }
 
   h2 {
-    font-size: 1.2rem;
+    font-size: var(--font-size-large);
   }
 
   p,
   a,
   li {
-    font-size: 1rem;
+    font-size: var(--font-size-medium);
   }
 
   code,
   pre,
   span {
-    font-size: 0.8rem;
+    font-size: var(--font-size-small);
   }
 
   .language-js {
-    font-size: 0.8rem;
+    font-size: var(--font-size-small);
   }
 
   .content {
-    margin: 0px 5%;
+    margin: var(--margin-none) 5%;
   }
 }
