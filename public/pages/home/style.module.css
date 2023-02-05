@@ -14,19 +14,15 @@
 }
 
 .post {
-  position: relative;
-  height: 50px;
   margin-top: var(--margin-medium);
   padding-bottom: var(--padding-mini);
   border-bottom: var(--border-bottom);
 }
 
 .title {
-  position: absolute;
   font-weight: 700;
   font-size: var(--font-size-xlarge);
   color: var(--color-black);
-  bottom: var(--padding-mini);
 }
 
 .title:hover {
@@ -34,10 +30,13 @@
 }
 
 .date {
-  position: absolute;
-  right: 0;
-  bottom: var(--padding-mini);
   font-size: var(--font-size-medium);
+  margin: var(--margin-mini) var(--margin-none);
+}
+
+.description {
+  font-size: var(--font-size-medium);
+  margin: var(--margin-small) var(--margin-none);
 }
 
 @media screen and (max-width: 768px) {
