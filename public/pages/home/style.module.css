@@ -1,6 +1,6 @@
 .home {
   color: #333;
-  margin: 0px 20%;
+  margin: var(--margin-none) 20%;
 }
 
 .headingcontainer {
@@ -8,45 +8,43 @@
 }
 
 .heading {
-  font-size: 1.5em;
+  font-size: var(--font-size-xlarge);
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: var(--margin-medium);
 }
 
 .post {
   position: relative;
   height: 50px;
-  margin-top: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #ccc;
+  margin-top: var(--margin-medium);
+  padding-bottom: var(--padding-mini);
+  border-bottom: var(--border-bottom);
 }
 
 .title {
   position: absolute;
-  color: var(--color-brand);
   font-weight: 700;
-  text-decoration: none;
-  font-size: 1.6rem;
-  bottom: 10px;
+  font-size: var(--font-size-xlarge);
+  bottom: var(--padding-mini);
 }
 
 .date {
   position: absolute;
   right: 0;
-  bottom: 10px;
-  font-size: 1rem;
+  bottom: var(--padding-mini);
+  font-size: var(--font-size-medium);
 }
 
 @media screen and (max-width: 768px) {
   .home {
-    margin: 0;
+    margin: var(--margin-none);
   }
 
   .title {
-    font-size: 1.2rem;
+    font-size: var(--font-size-large);
   }
 
   .date {
-    font-size: 0.8rem;
+    font-size: var(--font-size-small);
   }
 }
