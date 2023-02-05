@@ -1,4 +1,14 @@
 import { writeFileSync, readFileSync, readdirSync } from "fs";
+import { marked } from "marked";
+
+const markdownToString = (markdown) => {
+  const html = marked(markdown);
+  const notTag = html.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g, "");
+  const breakToSpace = notTag.replace(/(\r\n|\n|\r)/gm, " ");
+  const removeTwitter = breakToSpace.replace(/@twitter\[.*\]/g, "");
+  const removeOg = removeTwitter.replace(/@og\[.*\]/g, "");
+  return removeOg;
+};
 
 const FRONTMATTER = /---\n([\s\S]*?)\n---\n\n([\s\S]*)/;
 const FRONTMATTER_LIST =
@@ -14,10 +24,7 @@ const FRONTMATTER_LIST =
     );
     const md = file.match(FRONTMATTER);
     const id = md[1].match(FRONTMATTER_LIST)[1];
-    const c = md[2]
-      .replace(/\n/g, "")
-      .replace(/```[\s\S]*?```/g, "")
-      .slice(0, 300);
+    const c = markdownToString(md[2]).slice(0, 200);
 
     return { id, content: `${c}...` };
   });
