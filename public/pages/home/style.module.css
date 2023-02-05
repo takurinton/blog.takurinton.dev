@@ -42,7 +42,7 @@
 
 @media screen and (max-width: 768px) {
   .home {
-    margin: var(--margin-none);
+    margin: var(--margin-none) 10%;
   }
 
   .title {
