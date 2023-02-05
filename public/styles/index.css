@@ -51,12 +51,12 @@
 
 a {
   font-weight: var(--font-weight-bold);
-  color: var(--color-black);
+  color: var(--color-primary-main);
   text-decoration: none;
 }
 
 a:hover {
-  color: var(--color-primary-main);
+  color: var(--color-secondary-main);
 }
 
 html,

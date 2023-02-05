@@ -25,7 +25,12 @@
   position: absolute;
   font-weight: 700;
   font-size: var(--font-size-xlarge);
+  color: var(--color-black);
   bottom: var(--padding-mini);
+}
+
+.title:hover {
+  color: var(--color-primary-main);
 }
 
 .date {
