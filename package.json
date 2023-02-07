@@ -26,7 +26,7 @@
   "dependencies": {
     "hoofd": "^1.2.2",
     "marked": "4.2.5",
-    "preact": "^10.11.3",
+    "preact": "^10.12.0",
     "preact-iso": "^2.3.1"
   },
   "author": "takurinton",
