@@ -16,9 +16,9 @@
   "devDependencies": {
     "@types/marked": "4.0.8",
     "@types/node": "18.11.9",
-    "@typescript-eslint/eslint-plugin": "5.53.0",
-    "@typescript-eslint/parser": "5.53.0",
-    "eslint": "8.34.0",
+    "@typescript-eslint/eslint-plugin": "5.54.0",
+    "@typescript-eslint/parser": "5.54.0",
+    "eslint": "8.35.0",
     "eslint-config-preact": "1.3.0",
     "typescript": "4.9.4",
     "wmr": "3.8.0"
