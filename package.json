@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "yarn prebuild && wmr",
-    "build": "tsc && NODE_ENV=production && yarn prebuild && wmr build --prerender",
+    "build": "tsc && NODE_ENV=production && yarn prebuild && wmr build --prerender && node ./scripts/make-feed.js",
     "serve": "wmr serve",
     "lint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "gen": "node ./scripts/gen-template.js",
