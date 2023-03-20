@@ -5,8 +5,6 @@ import { writeFileSync, readFileSync, readdirSync } from "fs";
     readFileSync(`${process.cwd()}/public/contents/posts.json`)
   );
 
-  console.log(posts);
-
   const feed = `<?xml version="1.0" encoding="UTF-8"?>
   <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
