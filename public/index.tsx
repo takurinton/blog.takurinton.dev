@@ -28,9 +28,9 @@ if (typeof window !== "undefined") {
   hydrate(<App />, document.body);
 }
 
-export async function prerender() {
-  return (await import("./prerender.js")).prerender(<App />);
-}
+// export async function prerender() {
+//   return (await import("./prerender.js")).prerender(<App />);
+// }
 
 // eslint-disable-next-line no-undef
 const m: GlobalNodeModule =

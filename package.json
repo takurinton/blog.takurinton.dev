@@ -8,7 +8,8 @@
     "serve": "wmr serve",
     "lint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "gen": "node ./scripts/gen-template.js",
-    "prebuild": "node ./scripts/pre-build.js"
+    "prebuild": "node ./scripts/pre-build.js",
+    "prerender": "node ./scripts/prerender.js"
   },
   "alias": {
     "react": "preact/compat"
