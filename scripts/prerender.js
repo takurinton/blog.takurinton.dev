@@ -63,17 +63,25 @@ async function w() {
     routes.push(i);
   }
 
+  function headToString(element) {
+    // こういう形式: [{ type: "meta", props: { name: "...", content: "..." }}]
+    const { type, props } = element;
+    const properties = Object.keys(props)
+      .map((p) => `${p}="${props[p]}"`)
+      .join(" ");
+
+    return `<${type} ${properties}>`;
+  }
+
   // html に書き出す
   for (const route of routes) {
     const { path: _path, html: _html, head } = route;
     const baseHtml = template;
     let html = baseHtml;
-    // let html = baseHtml.replace(
-    //   /<head(?:\s[^>]*?)?>[\s\S]*?<\/head>/,
-    //   `<head>${headHtml}</head>`
-    // );
-
     html = html.replace("<title></title>", `<title>${head.title}</title>`);
+
+    let headHtml = Array.from(head.elements).map(headToString).join("");
+    html = html.replace("</head>", `${headHtml}</head>`);
 
     html = html.replace(
       /<body(?:\s[^>]*?)?>[\s\S]*?<\/body>/,
