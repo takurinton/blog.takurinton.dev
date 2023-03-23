@@ -1,6 +1,4 @@
 import { Worker } from "worker_threads";
-import { prerender as ssr } from "preact-iso";
-import { toStatic } from "hoofd/preact";
 
 /**
  * worker のコード
@@ -12,9 +10,9 @@ async function w() {
    * @returns
    */
   async function _prerender(vnode) {
-    const res = await ssr(vnode);
+    const res = await (await import("preact-iso")).prerender(vnode);
 
-    const head = toStatic();
+    const head = (await import("hoofd/preact")).toStatic();
     const elements = new Set([
       ...head.links.map((props) => ({ type: "link", props })),
       ...head.metas.map((props) => ({ type: "meta", props })),
@@ -31,25 +29,10 @@ async function w() {
     };
   }
 
-  const cwd = ".";
-  const out = ".cache";
   const publicPath = `./public`;
 
   const path = require("path");
   const fs = require("fs").promises;
-
-  // const isCacheDirExists = await fs
-  //   .access(path.resolve(cwd, out))
-  //   .then(() => true)
-  //   .catch(() => false);
-  // if (!isCacheDirExists) {
-  //   await fs.mkdir(path.resolve(cwd, out));
-  // }
-
-  // await fs.writeFile(
-  //   path.resolve(cwd, out, "package.json"),
-  //   '{"type":"module"}'
-  // );
 
   const template = await fs.readFile(
     path.resolve("./dist", "index.html"),
@@ -60,8 +43,6 @@ async function w() {
     .exec(template)[2]
     .replace(publicPath, "")
     .replace(/^(\.?\/)?/g, "");
-
-  // fs.copyFile(`./dist/${match}`, path.resolve(cwd, out, match));
 
   // 最終的な script
   // file splitting はしてないので単一ファイルでいい
@@ -74,7 +55,8 @@ async function w() {
     return { text, json: () => text().then(JSON.parse) };
   };
 
-  const res = await _prerender(require(script).default);
+  const indexjs = await import(script);
+  const res = await _prerender(indexjs.App);
   console.log(res);
 }
 
