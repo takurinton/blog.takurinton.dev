@@ -5,30 +5,6 @@ import { Worker } from "worker_threads";
  * @todo 関数の分割とテストを書く
  */
 async function w() {
-  /**
-   * @param {import('preact').VNode} vnode
-   * @returns
-   */
-  async function _prerender(vnode) {
-    const res = await (await import("preact-iso")).prerender(vnode);
-
-    const head = (await import("hoofd/preact")).toStatic();
-    const elements = new Set([
-      ...head.links.map((props) => ({ type: "link", props })),
-      ...head.metas.map((props) => ({ type: "meta", props })),
-      ...head.scripts.map((props) => ({ type: "script", props })),
-    ]);
-
-    return {
-      ...res,
-      head: {
-        title: head.title,
-        lang: "en",
-        elements,
-      },
-    };
-  }
-
   const publicPath = `./public`;
 
   const path = require("path");
@@ -55,9 +31,16 @@ async function w() {
     return { text, json: () => text().then(JSON.parse) };
   };
 
-  const indexjs = await import(script);
-  const res = await _prerender(indexjs.App);
-  console.log(res);
+  globalThis.location = new URL("/", "http://localhost");
+
+  // ここらへんは wmr の仕組みに乗っかってるだけなので後で剥がす
+  const p = {
+    ssr: true,
+    url: "/",
+    route: [{ url: "/" }],
+  };
+  const $m = new Function("source", "return import(source)");
+  const res = await (await $m("file:///" + script)).prerender(p);
 }
 
 function prerender() {
