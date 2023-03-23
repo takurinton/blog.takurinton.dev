@@ -2,9 +2,11 @@ import { Worker } from "worker_threads";
 
 /**
  * worker のコード
- * @todo 関数の分割とテストを書く
+ * 現状 build は wmr を使っているのでファイルや meta タグの取得のルールは wmr に乗っかっている
+ * build を rollup にするタイミングでここは書き直す
+ * @memo ファイルベースルーティングにしたい
  */
-async function w() {
+async function generateStaticFiles() {
   const publicPath = `./public`;
 
   const path = require("path");
@@ -24,9 +26,6 @@ async function w() {
   // file splitting はしてないので単一ファイルでいい
   const script = path.resolve("./dist", match);
 
-  // ここからは wmr の仕組みに乗っかってるだけなので後でよしなにする
-  // 実装側で prerender 関数を書かないと meta タグが拾えない
-
   delete globalThis.fetch;
   globalThis.fetch = async (url) => {
     const text = () =>
@@ -34,12 +33,14 @@ async function w() {
     return { text, json: () => text().then(JSON.parse) };
   };
 
+  // prerender する時に location がないとエラーになるので仮の location を設定
+  // パスは現在 prerender してるページのパス
   globalThis.location = new URL("/", "http://localhost");
   // ユーザー定義の prerender 関数を import
   const userPrerender = (await import("file:///" + script)).prerender;
 
   let routes = [];
-  // home を prerender
+  // 初めに home を prerender
   const res = await userPrerender({
     ssr: true,
     url: "/",
@@ -76,36 +77,41 @@ async function w() {
   // html に書き出す
   for (const route of routes) {
     const { path: _path, html: _html, head } = route;
-    const baseHtml = template;
-    let html = baseHtml;
+    // hoofd/preact 経由で取得した情報をベースになる html に差し込む
+    let html = template;
+
+    // title タグを置き換える
     html = html.replace("<title></title>", `<title>${head.title}</title>`);
 
+    // head タグを置き換える
     let headHtml = Array.from(head.elements).map(headToString).join("");
     html = html.replace("</head>", `${headHtml}</head>`);
 
+    // body にコンテンツを差し込む
     html = html.replace(
       /<body(?:\s[^>]*?)?>[\s\S]*?<\/body>/,
       `<body>${_html}</body>`
     );
 
+    // JS をロードする
     html = html.replace(
       '<script type="isodata"></script>',
       `<script type="module" src="/${match}"></script>`
     );
 
+    // 書き込む
     const dir = path.resolve(`./dist${_path}`);
     await fs.mkdir(dir, { recursive: true });
     await fs.writeFile(path.resolve(dir, "index.html"), html, "utf-8");
   }
 
-  // for (const post of posts) {
-  //   console.log(post.head);
-  // }
+  console.log("generated static html files");
+  console.log('build finished in "dist" directory');
 }
 
 function prerender() {
   const worker = new Worker(
-    `(${w})(require('worker_threads').workerData)
+    `(${generateStaticFiles})(require('worker_threads').workerData)
       .then(r => require('worker_threads').parentPort.postMessage([1,r]))
       .catch(err => require('worker_threads').parentPort.postMessage([0,err && err.stack || err+'']))`,
     {
