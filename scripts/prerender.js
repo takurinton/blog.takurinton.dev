@@ -5,30 +5,6 @@ import { Worker } from "worker_threads";
  * @todo 関数の分割とテストを書く
  */
 async function w() {
-  /**
-   * @param {import('preact').VNode} vnode
-   * @returns
-   */
-  async function _prerender(vnode) {
-    const res = await (await import("preact-iso")).prerender(vnode);
-
-    const head = (await import("hoofd/preact")).toStatic();
-    const elements = new Set([
-      ...head.links.map((props) => ({ type: "link", props })),
-      ...head.metas.map((props) => ({ type: "meta", props })),
-      ...head.scripts.map((props) => ({ type: "script", props })),
-    ]);
-
-    return {
-      ...res,
-      head: {
-        title: head.title,
-        lang: "en",
-        elements,
-      },
-    };
-  }
-
   const publicPath = `./public`;
 
   const path = require("path");
