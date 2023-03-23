@@ -10,6 +10,9 @@ async function w() {
   const path = require("path");
   const fs = require("fs").promises;
 
+  // ESM を使うために package.json を dist に追加する
+  await fs.writeFile(path.resolve("./dist/package.json"), '{"type":"module"}');
+
   const template = await fs.readFile(
     path.resolve("./dist", "index.html"),
     "utf-8"
@@ -24,6 +27,9 @@ async function w() {
   // file splitting はしてないので単一ファイルでいい
   const script = path.resolve("./dist", match);
 
+  // ここからは wmr の仕組みに乗っかってるだけなので後でよしなにする
+  // 実装側で prerender 関数を書かないと meta タグが拾えない
+
   delete globalThis.fetch;
   globalThis.fetch = async (url) => {
     const text = () =>
@@ -32,21 +38,18 @@ async function w() {
   };
 
   globalThis.location = new URL("/", "http://localhost");
-
-  // ここらへんは wmr の仕組みに乗っかってるだけなので後で剥がす
-  // 実装側で prerender 関数を書かないと meta タグが拾えない
-  const p = {
-    ssr: true,
-    url: "/",
-    route: [{ url: "/" }],
-  };
-
   // ユーザー定義の prerender 関数を import
   const userPrerender = (await import("file:///" + script)).prerender;
 
+  let routes = [];
   // home を prerender
-  const res = await userPrerender(p);
-  // TODO: ファイルを書き換える
+  const res = await userPrerender({
+    ssr: true,
+    url: "/",
+    route: [{ url: "/" }],
+  });
+  const home = { path: "/", html: res.html, head: res.head };
+  routes.push(home);
 
   // post を prerender
   const postPaths = Array.from(res.links).filter((p) => p !== "/");
@@ -59,8 +62,35 @@ async function w() {
     });
 
     // 意図的に必要な情報だけ取得してる
-    const i = { path: p, html: post.html, head: post.head.elements };
-    // TODO: ファイルを書き換える
+    const i = { path: url, html: post.html, head: post.head };
+    routes.push(i);
+  }
+
+  // html に書き出す
+  for (const route of routes) {
+    const { path: _path, html: _html, head } = route;
+    const baseHtml = template;
+    let html = baseHtml;
+    // let html = baseHtml.replace(
+    //   /<head(?:\s[^>]*?)?>[\s\S]*?<\/head>/,
+    //   `<head>${headHtml}</head>`
+    // );
+
+    html = html.replace("<title></title>", `<title>${head.title}</title>`);
+
+    html = html.replace(
+      /<body(?:\s[^>]*?)?>[\s\S]*?<\/body>/,
+      `<body>${_html}</body>`
+    );
+
+    html = html.replace(
+      '<script type="isodata"></script>',
+      `<script src="/${match}"></script>`
+    );
+
+    const dir = path.resolve(`./dist${_path}`);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(path.resolve(dir, "index.html"), html, "utf-8");
   }
 
   // for (const post of posts) {
