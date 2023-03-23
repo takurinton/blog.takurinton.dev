@@ -4,11 +4,12 @@
   "type": "module",
   "scripts": {
     "dev": "yarn prebuild && wmr",
-    "build": "tsc && NODE_ENV=production && yarn prebuild && wmr build --prerender && node ./scripts/make-feed.js",
+    "build": "tsc && NODE_ENV=production && yarn prebuild && wmr build && yarn prerender && node ./scripts/make-feed.js",
     "serve": "wmr serve",
     "lint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "gen": "node ./scripts/gen-template.js",
-    "prebuild": "node ./scripts/pre-build.js"
+    "prebuild": "node ./scripts/pre-build.js",
+    "prerender": "node ./scripts/prerender.js"
   },
   "alias": {
     "react": "preact/compat"

@@ -28,6 +28,9 @@ if (typeof window !== "undefined") {
   hydrate(<App />, document.body);
 }
 
+// MEMO:
+// build を置き換えても wmr を剥がすまでは prerender 関数は残しておく
+// そうしないと meta タグがうまく取れない、ここの仕組みに関しては後で考える
 export async function prerender() {
   return (await import("./prerender.js")).prerender(<App />);
 }
