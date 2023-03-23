@@ -10,9 +10,6 @@ async function w() {
   const path = require("path");
   const fs = require("fs").promises;
 
-  // ESM を使うために package.json を dist に追加する
-  await fs.writeFile(path.resolve("./dist/package.json"), '{"type":"module"}');
-
   const template = await fs.readFile(
     path.resolve("./dist", "index.html"),
     "utf-8"
@@ -85,7 +82,7 @@ async function w() {
 
     html = html.replace(
       '<script type="isodata"></script>',
-      `<script src="/${match}"></script>`
+      `<script type="module" src="/${match}"></script>`
     );
 
     const dir = path.resolve(`./dist${_path}`);
