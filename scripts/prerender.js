@@ -7,6 +7,27 @@ import { Worker } from "worker_threads";
  * @memo ファイルベースルーティングにしたい
  */
 async function generateStaticFiles() {
+  async function _prerender(vnode) {
+    const res = await (await import("preact-iso")).prerender(vnode);
+
+    // TODO: 自前実装する
+    const head = (await import("hoofd/preact")).toStatic();
+    const elements = new Set([
+      ...head.links.map((props) => ({ type: "link", props })),
+      ...head.metas.map((props) => ({ type: "meta", props })),
+      ...head.scripts.map((props) => ({ type: "script", props })),
+    ]);
+
+    return await {
+      ...res,
+      head: {
+        title: head.title,
+        lang: "en",
+        elements,
+      },
+    };
+  }
+
   const publicPath = `./public`;
 
   const path = require("path");
@@ -37,9 +58,8 @@ async function generateStaticFiles() {
   // パスは現在 prerender してるページのパス
   globalThis.location = new URL("/", "http://localhost");
 
-  const s = await import(script);
-  // const _prerender = (await import("preact-iso")).prerender;
-  const userPrerender = (props) => s.prerender(s.App(props));
+  const { App } = await import(script);
+  const userPrerender = async (props) => await _prerender(() => App);
 
   let routes = [];
   // 初めに home を prerender
