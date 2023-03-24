@@ -36,8 +36,10 @@ async function generateStaticFiles() {
   // prerender する時に location がないとエラーになるので仮の location を設定
   // パスは現在 prerender してるページのパス
   globalThis.location = new URL("/", "http://localhost");
-  // ユーザー定義の prerender 関数を import
-  const userPrerender = (await import("file:///" + script)).prerender;
+
+  const s = await import(script);
+  // const _prerender = (await import("preact-iso")).prerender;
+  const userPrerender = (props) => s.prerender(s.App(props));
 
   let routes = [];
   // 初めに home を prerender
