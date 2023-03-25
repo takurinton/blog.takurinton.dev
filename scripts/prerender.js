@@ -1,3 +1,4 @@
+import { render } from "preact";
 import { Worker } from "worker_threads";
 
 /**
@@ -7,8 +8,12 @@ import { Worker } from "worker_threads";
  * @memo ファイルベースルーティングにしたい
  */
 async function generateStaticFiles() {
-  async function _prerender(vnode) {
-    const res = await (await import("preact-iso")).prerender(vnode);
+  async function _prerender(vnode, option) {
+    // TODO: 自前実装する
+    // preact-iso の prerender では preact-render-to-string による SSR と
+    // link を拾って導線を作る処理がある
+    // link は a タグを拾っているが、そこはちょっと考えたい
+    const res = await (await import("preact-iso")).prerender(vnode, option);
 
     // TODO: 自前実装する
     const head = (await import("hoofd/preact")).toStatic();
@@ -18,7 +23,7 @@ async function generateStaticFiles() {
       ...head.scripts.map((props) => ({ type: "script", props })),
     ]);
 
-    return await {
+    return {
       ...res,
       head: {
         title: head.title,
@@ -58,16 +63,28 @@ async function generateStaticFiles() {
   // パスは現在 prerender してるページのパス
   globalThis.location = new URL("/", "http://localhost");
 
-  const { App } = await import(script);
-  const userPrerender = async (props) => await _prerender(() => App);
+  const source = await import(script);
+  const { renderToString } = await import("preact-render-to-string");
+  const { h } = await import("preact");
+
+  const vnode = h(source.App);
+  console.log("before _prerender");
+  const userPrerender = async () => _prerender(vnode);
+  // const userPrerender = async () => {
+  //   const res = renderToString(vnode);
+  //   return {
+  //     html: res,
+  //     head: {
+  //       title: "title",
+  //       lang: "en",
+  //       elements: new Set(),
+  //     },
+  //   };
+  // };
 
   let routes = [];
   // 初めに home を prerender
-  const res = await userPrerender({
-    ssr: true,
-    url: "/",
-    route: [{ url: "/" }],
-  });
+  const res = await userPrerender();
   const home = { path: "/", html: res.html, head: res.head };
   routes.push(home);
 
@@ -75,11 +92,7 @@ async function generateStaticFiles() {
   const postPaths = Array.from(res.links).filter((p) => p !== "/");
   for (const url of postPaths) {
     globalThis.location = new URL(url, "http://localhost");
-    const post = await userPrerender({
-      ssr: true,
-      url,
-      route: [{ url }],
-    });
+    const post = await userPrerender();
 
     // 意図的に必要な情報だけ取得してる
     const i = { path: url, html: post.html, head: post.head };
