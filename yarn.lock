@@ -1190,10 +1190,10 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-hoofd@^1.2.2:
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/hoofd/-/hoofd-1.5.2.tgz#3ebfbda25f90abc27bed4cc851b2d4146b39acaa"
-  integrity sha512-zzxE0JmS6KbbRDrCVqcH6VJMNGKnphuQlQHO08EBSlAyT/+e895c6PswOj7wscbk3S4uV1pkApBZU2OOrMzDjg==
+hoofd@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/hoofd/-/hoofd-1.6.0.tgz#fc5187d95169a267ddccf6a971027d444ba562de"
+  integrity sha512-jl9889T0d8qOOSR6s3sLl+n5/bDEIWA78YEwDyO9s6ikX8Zf3+Qw5aEhq91XfmwnGaD8lgXLJquASS5lHxAY6A==
 
 ignore@^5.2.0:
   version "5.2.0"
