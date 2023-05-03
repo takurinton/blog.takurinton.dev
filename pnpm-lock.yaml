@@ -5,8 +5,8 @@ dependencies:
     specifier: ^1.2.2
     version: 1.2.2(react@18.2.0)
   marked:
-    specifier: 4.3.0
-    version: 4.3.0
+    specifier: 5.0.0
+    version: 5.0.0
   preact:
     specifier: ^10.13.0
     version: 10.13.0
@@ -1657,9 +1657,9 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /marked@4.3.0:
-    resolution: {integrity: sha512-PRsaiG84bK+AMvxziE/lCFss8juXjNaWzVbN5tXAm4XjeaS9NAHhop+PjQxz2A9h8Q4M/xGmzP8vqNwy6JeK0A==}
-    engines: {node: '>= 12'}
+  /marked@5.0.0:
+    resolution: {integrity: sha512-YQ6+L9l/NSBDjFgCQQebmTCc62EUdZ5RpIZ7A/FmC8IYMB5s7Cz8sT7imuMAkbIL4CvXpQLdW45fpK5UwiU7DA==}
+    engines: {node: '>= 18'}
     hasBin: true
     dev: false
 
