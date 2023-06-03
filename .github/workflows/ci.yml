@@ -17,12 +17,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+
       - uses: pnpm/action-setup@v2
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 7
+          version: 8
           run_install: false
+
       - name: Get pnpm store directory
         id: pnpm-cache
         shell: bash
@@ -36,7 +38,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: install
-        run: pnpm install
+        run: pnpm install --frozen-lockfile --prefer-offline
       - name: lint
         run: pnpm run lint
       - name: build
