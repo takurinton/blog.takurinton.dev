@@ -12,10 +12,10 @@ dependencies:
     specifier: 4.3.0
     version: 4.3.0
   preact:
-    specifier: ^10.13.0
+    specifier: 10.13.0
     version: 10.13.0
   preact-iso:
-    specifier: ^2.3.1
+    specifier: 2.3.1
     version: 2.3.1(preact-render-to-string@6.0.3)(preact@10.13.0)
 
 devDependencies:
