@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   hoofd:
-    specifier: 1.2.2
-    version: 1.2.2(react@18.2.0)
+    specifier: 1.7.0
+    version: 1.7.0(react@18.2.0)
   marked:
     specifier: 4.3.0
     version: 4.3.0
@@ -1407,8 +1407,8 @@ packages:
       function-bind: 1.1.1
     dev: true
 
-  /hoofd@1.2.2(react@18.2.0):
-    resolution: {integrity: sha512-kkJDsAWF5PQFXjCgqqkr6qNm8oFsC59piTcvciWrMBTojT+WEXAMKfa/iOTGY3oLP1Vidkp2mkJKnFFhv2HNSw==}
+  /hoofd@1.7.0(react@18.2.0):
+    resolution: {integrity: sha512-kh9gSPIqB/xk4lK8q4dEkjPL2mXhrUoTiJqIMfMokOEFV3ZJVounxtuRXxvz9oHIsIUnPNjmmyRsC0ydKkPDOg==}
     peerDependencies:
       react: '>= 16.8.0'
     dependencies:
