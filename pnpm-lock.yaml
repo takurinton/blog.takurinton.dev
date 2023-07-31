@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -9,8 +9,8 @@ dependencies:
     specifier: 1.7.0
     version: 1.7.0(react@18.2.0)
   marked:
-    specifier: 4.3.0
-    version: 4.3.0
+    specifier: 5.1.2
+    version: 5.1.2
   preact:
     specifier: 10.16.0
     version: 10.16.0
@@ -20,8 +20,8 @@ dependencies:
 
 devDependencies:
   '@types/marked':
-    specifier: 4.0.8
-    version: 4.0.8
+    specifier: 5.0.1
+    version: 5.0.1
   '@types/node':
     specifier: 18.11.9
     version: 18.11.9
@@ -427,8 +427,8 @@ packages:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
     dev: true
 
-  /@types/marked@4.0.8:
-    resolution: {integrity: sha512-HVNzMT5QlWCOdeuBsgXP8EZzKUf0+AXzN+sLmjvaB3ZlLqO+e4u0uXrdw9ub69wBKFs+c6/pA4r9sy6cCDvImw==}
+  /@types/marked@5.0.1:
+    resolution: {integrity: sha512-Y3pAUzHKh605fN6fvASsz5FDSWbZcs/65Q6xYRmnIP9ZIYz27T4IOmXfH9gWJV1dpi7f1e7z7nBGUTx/a0ptpA==}
     dev: true
 
   /@types/node@18.11.9:
@@ -1656,9 +1656,9 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /marked@4.3.0:
-    resolution: {integrity: sha512-PRsaiG84bK+AMvxziE/lCFss8juXjNaWzVbN5tXAm4XjeaS9NAHhop+PjQxz2A9h8Q4M/xGmzP8vqNwy6JeK0A==}
-    engines: {node: '>= 12'}
+  /marked@5.1.2:
+    resolution: {integrity: sha512-ahRPGXJpjMjwSOlBoTMZAK7ATXkli5qCPxZ21TG44rx1KEo44bii4ekgTDQPNRQ4Kh7JMb9Ub1PVk1NxRSsorg==}
+    engines: {node: '>= 16'}
     hasBin: true
     dev: false
 
