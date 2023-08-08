@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -9,8 +9,8 @@ dependencies:
     specifier: 1.7.0
     version: 1.7.0(react@18.2.0)
   marked:
-    specifier: 4.3.0
-    version: 4.3.0
+    specifier: 7.0.1
+    version: 7.0.1
   preact:
     specifier: 10.16.0
     version: 10.16.0
@@ -1656,9 +1656,9 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /marked@4.3.0:
-    resolution: {integrity: sha512-PRsaiG84bK+AMvxziE/lCFss8juXjNaWzVbN5tXAm4XjeaS9NAHhop+PjQxz2A9h8Q4M/xGmzP8vqNwy6JeK0A==}
-    engines: {node: '>= 12'}
+  /marked@7.0.1:
+    resolution: {integrity: sha512-m8Aze620Ts62yaciz2DghZGUkUfdgvSNRicS2/XtQkStMNoce3NWjOD2b/jWF32+XXK6udM6pRhv2dKNlneAFA==}
+    engines: {node: '>= 16'}
     hasBin: true
     dev: false
 
