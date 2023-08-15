@@ -12,11 +12,11 @@ dependencies:
     specifier: 7.0.2
     version: 7.0.2
   preact:
-    specifier: 10.16.0
-    version: 10.16.0
+    specifier: 10.17.0
+    version: 10.17.0
   preact-iso:
     specifier: 2.3.1
-    version: 2.3.1(preact-render-to-string@6.0.3)(preact@10.16.0)
+    version: 2.3.1(preact-render-to-string@6.0.3)(preact@10.17.0)
 
 devDependencies:
   '@types/node':
@@ -1833,27 +1833,27 @@ packages:
     engines: {node: '>=8.6'}
     dev: true
 
-  /preact-iso@2.3.1(preact-render-to-string@6.0.3)(preact@10.16.0):
+  /preact-iso@2.3.1(preact-render-to-string@6.0.3)(preact@10.17.0):
     resolution: {integrity: sha512-PtiG0dJlyvIDfvqROCybIFq96CS2s8nLg8ZR4Yporx3mPQ5FgWGNKb+ejjewtjEDMdCUlYmMT8SdapWEAxVJ2Q==}
     peerDependencies:
       preact: '>=10'
       preact-render-to-string: '>=5'
     dependencies:
-      preact: 10.16.0
-      preact-render-to-string: 6.0.3(preact@10.16.0)
+      preact: 10.17.0
+      preact-render-to-string: 6.0.3(preact@10.17.0)
     dev: false
 
-  /preact-render-to-string@6.0.3(preact@10.16.0):
+  /preact-render-to-string@6.0.3(preact@10.17.0):
     resolution: {integrity: sha512-UUP+EtmLw5ns0fT9C7+CTdLawm1wLmlrZ6WKzJ4Jwhb4EBu4vy5ufIZKlrfvWNnPl1JFoJzZwzfKs97H4N0Vug==}
     peerDependencies:
       preact: '>=10'
     dependencies:
-      preact: 10.16.0
+      preact: 10.17.0
       pretty-format: 3.8.0
     dev: false
 
-  /preact@10.16.0:
-    resolution: {integrity: sha512-XTSj3dJ4roKIC93pald6rWuB2qQJO9gO2iLLyTe87MrjQN+HklueLsmskbywEWqCHlclgz3/M4YLL2iBr9UmMA==}
+  /preact@10.17.0:
+    resolution: {integrity: sha512-SNsI8cbaCcUS5tbv9nlXuCfIXnJ9ysBMWk0WnB6UWwcVA3qZ2O6FxqDFECMAMttvLQcW/HaNZUe2BLidyvrVYw==}
     dev: false
 
   /prelude-ls@1.2.1:
