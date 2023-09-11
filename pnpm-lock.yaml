@@ -9,8 +9,8 @@ dependencies:
     specifier: 1.7.0
     version: 1.7.0(react@18.2.0)
   marked:
-    specifier: 7.0.2
-    version: 7.0.2
+    specifier: 9.0.0
+    version: 9.0.0
   preact:
     specifier: 10.17.1
     version: 10.17.1
@@ -1662,8 +1662,8 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /marked@7.0.2:
-    resolution: {integrity: sha512-ADEBjnCHOrsLoV7JPvUNWtELZ0b4SeIALhrfxuA9uhS3hw2PCezROoFduIqMOjeagBPto732+YC5tZHBMQRdqg==}
+  /marked@9.0.0:
+    resolution: {integrity: sha512-37yoTpjU+TSXb9OBYY5n78z/CqXh76KiQj9xsKxEdztzU9fRLmbWO5YqKxgCVGKlNdexppnbKTkwB3RipVri8w==}
     engines: {node: '>= 16'}
     hasBin: true
     dev: false
