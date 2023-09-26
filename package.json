@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "yarn prebuild && wmr",
-    "build": "tsc && NODE_ENV=production && pnpm run prebuild && wmr build && pnpm run prerender && node ./scripts/make-feed.js",
+    "dev": "bun run prebuild && wmr",
+    "build": "tsc && NODE_ENV=production && bun run prebuild && wmr build --prerender && bun run make-feed",
     "serve": "wmr serve",
     "lint": "eslint './**/*.{js,jsx,ts,tsx}'",
-    "gen": "node ./scripts/gen-template.js",
-    "prebuild": "node ./scripts/pre-build.js",
-    "prerender": "node ./scripts/prerender.js"
+    "gen": "bun run ./scripts/gen-template.js",
+    "prebuild": "bun run ./scripts/pre-build.js",
+    "make-feed": "bun run ./scripts/make-feed.js"
   },
   "alias": {
     "react": "preact/compat"
