@@ -3,31 +3,28 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bun run prebuild && wmr",
-    "build": "tsc && NODE_ENV=production && bun run prebuild && wmr build --prerender && bun run make-feed",
+    "dev": "wmr",
+    "build": "NODE_ENV=production wmr build --prerender",
     "serve": "wmr serve",
-    "lint": "eslint './**/*.{js,jsx,ts,tsx}'",
-    "gen": "bun run ./scripts/gen-template.js",
-    "prebuild": "bun run ./scripts/pre-build.js",
-    "make-feed": "bun run ./scripts/make-feed.js"
+    "lint": "eslint './{public,src}/**/*.{js,jsx,ts,tsx}'",
+    "gen": "bun run ./scripts/gen-template.js"
   },
   "alias": {
     "react": "preact/compat"
   },
   "devDependencies": {
-    "@types/node": "18.11.9",
-    "@typescript-eslint/eslint-plugin": "5.62.0",
-    "@typescript-eslint/parser": "5.59.2",
-    "eslint": "8.49.0",
+    "@typescript-eslint/eslint-plugin": "6.8.0",
+    "@typescript-eslint/parser": "6.8.0",
+    "eslint": "8.52.0",
     "eslint-config-preact": "1.3.0",
-    "typescript": "5.1.3",
+    "typescript": "5.2.2",
     "wmr": "3.8.0"
   },
   "dependencies": {
     "hoofd": "1.7.0",
-    "marked": "7.0.2",
-    "preact": "10.17.1",
-    "preact-iso": "2.3.1"
+    "marked": "9.1.2",
+    "preact": "10.18.1",
+    "preact-iso": "2.3.2"
   },
   "author": "takurinton",
   "eslintConfig": {
