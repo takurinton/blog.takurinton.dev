@@ -1,8 +1,7 @@
 import { prerender as ssr } from "preact-iso";
-import { VNode } from "preact";
 import { toStatic } from "hoofd/preact";
 
-export async function prerender(vnode: VNode) {
+export async function prerender(vnode) {
   const res = await ssr(vnode);
 
   const head = toStatic();

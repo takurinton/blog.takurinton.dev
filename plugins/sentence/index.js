@@ -1,20 +1,34 @@
 import { writeFileSync, readFileSync, readdirSync } from "fs";
 import { marked } from "marked";
 
-const markdownToString = (markdown) => {
+export default function sentensePlugin({ plugins, cwd, prod }, opts) {
+  plugins.push(sentense({ cwd, prod, ...opts }));
+}
+
+function sentense() {
+  return {
+    name: "feed",
+    enforce: "pre",
+    configResolved() {
+      makeListObject();
+    },
+  };
+}
+
+function markdownToString(markdown) {
   const html = marked(markdown);
   const notTag = html.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g, "");
   const breakToSpace = notTag.replace(/(\r\n|\n|\r)/gm, " ");
   const removeTwitter = breakToSpace.replace(/@twitter\[.*\]/g, "");
   const removeOg = removeTwitter.replace(/@og\[.*\]/g, "");
   return removeOg;
-};
+}
 
 const FRONTMATTER = /---\n([\s\S]*?)\n---\n\n([\s\S]*)/;
 const FRONTMATTER_LIST =
   /id:([\s\S]*)\ntitle:([\s\S]*)\ndescription:([\s\S]*)\ncreated_at:([\s\S]*)/;
 
-(() => {
+function makeListObject() {
   const files = readdirSync(`${process.cwd()}/public/contents`);
   const posts = files.filter((file) => file.match(/\.md$/));
   const contents = posts.map((post) => {
@@ -50,4 +64,4 @@ const FRONTMATTER_LIST =
       console.log(`posts.json updated.`);
     }
   );
-})();
+}

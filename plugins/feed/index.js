@@ -1,6 +1,19 @@
-import { writeFileSync, readFileSync, readdirSync } from "fs";
+import { writeFileSync, readFileSync } from "fs";
 
-(() => {
+export default function feedPlugin({ plugins, cwd, prod }, opts) {
+  plugins.push(feed({ cwd, prod, ...opts }));
+}
+
+function feed() {
+  return {
+    name: "feed",
+    async load() {
+      makeFeed();
+    },
+  };
+}
+
+function makeFeed() {
   const posts = JSON.parse(
     readFileSync(`${process.cwd()}/public/contents/posts.json`)
   );
@@ -29,7 +42,7 @@ import { writeFileSync, readFileSync, readdirSync } from "fs";
       <title>${content.title} | たくりんとんのブログ</title>
       <link>https://blog.takurinton.dev/post/${content.id}</link>
       <pubDate>${new Date(content.created_at).toUTCString()}</pubDate>
-      <description>${content.content}</description>
+      <description>${content.description}</description>
       <guid>https://blog.takurinton.dev/post/${content.id}</guid>
       </item>`
     )
@@ -41,4 +54,4 @@ import { writeFileSync, readFileSync, readdirSync } from "fs";
     if (err) throw err;
     console.log(`posts.json updated.`);
   });
-})();
+}
