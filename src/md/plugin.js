@@ -1,3 +1,7 @@
+/**
+ * marked plugin
+ * @see https://marked.js.org/using_pro#extensions
+ */
 export const plugin = {
   extensions: [
     {

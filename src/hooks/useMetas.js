@@ -1,12 +1,11 @@
 import { useTitle, useMeta } from "hoofd/preact";
 
-export const useMetas = ({
-  title = "",
-  description = "",
-}: {
-  title?: string;
-  description?: string;
-}) => {
+/**
+ * set meta tags when server rendering and client rendering
+ *
+ * @param {{title: string, description: string}} param
+ */
+export const useMetas = ({ title = "", description = "" }) => {
   useTitle(title);
   useMeta({ name: "og:title", content: `takurinton | ${title}` });
   useMeta({ property: "twitter:title", content: `takurinton | ${title}` });

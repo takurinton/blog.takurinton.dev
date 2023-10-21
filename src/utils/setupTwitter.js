@@ -1,3 +1,6 @@
+/**
+ * Setup Twitter widget when Twitter embed exists
+ */
 export const setupTwitter = async () => {
   const script = Object.assign(document.createElement("script"), {
     innerHTML: `window.twttr = (function(d, s, id) {
