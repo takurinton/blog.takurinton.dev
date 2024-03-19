@@ -38,7 +38,7 @@ export default async function prerender(vnode, options) {
 	};
 
 	try {
-		const html = `${renderToStringAsync(
+		const html = `${await renderToStringAsync(
 			vnode
 		)}<script type="isodata"></script>`;
 		return { html, links };
