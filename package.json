@@ -4,7 +4,6 @@
   "type": "module",
   "scripts": {
     "dev": "wmr",
-    "preinstall": "cd ./preact-iso && bun install && cd ..",
     "build": "NODE_ENV=production wmr build --prerender",
     "serve": "wmr serve",
     "lint": "eslint './{public,src}/**/*.{js,jsx,ts,tsx}'",
@@ -25,7 +24,7 @@
     "hoofd": "1.7.0",
     "marked": "9.1.2",
     "preact": "10.18.1",
-    "preact-iso": "file:./preact-iso"
+    "preact-iso": "2.5.0"
   },
   "author": "takurinton",
   "eslintConfig": {
