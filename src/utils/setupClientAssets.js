@@ -2,6 +2,9 @@ import { getHtml } from "src/md/getHtml";
 
 const CACHE = new Map();
 
+/**
+ * Set external link card when OG embedding exists
+ */
 export const setupClientAssets = () => {
   (async () => {
     const og = document.getElementsByClassName("og");

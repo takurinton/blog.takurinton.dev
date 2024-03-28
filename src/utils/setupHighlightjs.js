@@ -1,5 +1,6 @@
-// bundle に混ぜ込むと謎にエラーになるので、分ける
-// この命令的なコードが俺の技術力の低さの証明になっている気がしてならない、こんなことしてないでバンドルチューニングをすればいいだけでは
+/**
+ * Set highlightjs when markdown code tag exists
+ */
 export const setupHighlightjs = () => {
   const highlightjs = document.getElementById("highlightjs");
   const highlightcss = document.getElementById("highlightcss");

@@ -4,9 +4,6 @@ import Header from "./header";
 import Home from "./pages/home";
 import Post from "./pages/post";
 
-// eslint-disable-next-line no-unused-vars
-import { h } from "preact";
-
 export function App() {
   return (
     <LocationProvider>
@@ -31,9 +28,3 @@ if (typeof window !== "undefined") {
 export async function prerender() {
   return (await import("./prerender.js")).prerender(<App />);
 }
-
-// eslint-disable-next-line no-undef
-const m: GlobalNodeModule =
-  // eslint-disable-next-line no-undef
-  typeof module !== "undefined" ? module : ({} as any);
-if (m.hot) m.hot.accept((u) => hydrate(<u.module.App />, document.body));

@@ -1,3 +1,7 @@
+/**
+ * @param {string} url
+ * @returns {Promise<{title: string, description: string, image: string}>}
+ */
 const getMetaTags = async (url) => {
   if (!url) {
     return {
@@ -11,6 +15,11 @@ const getMetaTags = async (url) => {
   return json;
 };
 
+/**
+ * @param {string} url
+ * @param {number} id
+ * @returns {Promise<string>}
+ */
 export const getHtml = async (url, id) => {
   const { title, description, image } = await getMetaTags(url);
 

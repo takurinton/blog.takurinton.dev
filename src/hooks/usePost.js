@@ -1,30 +1,25 @@
 import { useState } from "preact/hooks";
 import { markdown, MarkdownInit } from "src/md";
 
-type FetchPost = {
-  mdStr: string;
-  meta: {};
-};
-
-type Post = {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: string;
-  content: string;
-};
-
-type Response = Post | Error;
-
 const CACHE = new Map();
 
-async function fetchPost(url?: string): Promise<FetchPost> {
+/**
+ * @param {string | undefined} url
+ * @returns {Promise<{mdStr: string, meta: {}}>}
+ */
+async function fetchPost(url) {
   const mdStr = await fetch(url).then((res) => res.text());
   const meta = {};
   return { mdStr, meta };
 }
 
-export function usePost(id: string): Response {
+/**
+ * get post data from markdown file
+ *
+ * @param {number} id
+ * @returns
+ */
+export function usePost(id) {
   const url = `/contents/${id}.md`;
   const [, setPost] = useState(0);
   let post = CACHE.get(url);
@@ -32,7 +27,7 @@ export function usePost(id: string): Response {
     post = fetchPost(url);
     CACHE.set(url, post);
     post.then(
-      (value: FetchPost) => {
+      (value) => {
         const md = new MarkdownInit(value.mdStr);
         const title = md.getTitle();
         const createdAt = md.getCreatedAt();
@@ -41,7 +36,7 @@ export function usePost(id: string): Response {
         post.value = { id, title, description, createdAt, content };
         setPost(post);
       },
-      (error: any) => {
+      (error) => {
         post.error = error;
         setPost(post);
       }

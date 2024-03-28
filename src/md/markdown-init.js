@@ -1,14 +1,12 @@
+/**
+ * @todo replace to some kind of interface or ...??
+ */
 export class MarkdownInit {
-  md: RegExpMatchArray;
-  frontmatter: string;
-  content: string;
-  frontmatterList: Array<string>;
-
-  private FRONTMATTER = /---\n([\s\S]*?)\n---\n\n([\s\S]*)/;
-  private FRONTMATTER_LIST =
+  FRONTMATTER = /---\n([\s\S]*?)\n---\n\n([\s\S]*)/;
+  FRONTMATTER_LIST =
     /id:([\s\S]*)\ntitle:([\s\S]*)\ndescription:([\s\S]*)\ncreated_at:([\s\S]*)/;
 
-  constructor(md: string) {
+  constructor(md) {
     this.md = md.match(this.FRONTMATTER);
     this.frontmatter = this.md[1];
     this.content = this.md[2];

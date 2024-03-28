@@ -3,13 +3,14 @@ import { setupClientAssets } from "src/utils/setupClientAssets";
 import { setupHighlightjs } from "src/utils/setupHighlightjs";
 import { setupTwitter } from "src/utils/setupTwitter";
 
-declare global {
-  // eslint-disable-next-line no-unused-vars
-  interface Window {
-    twttr: any;
-  }
-}
-
+/**
+ * Perform client rendering when:
+ * 1. Call highlightjs when markdown code tag exists
+ * 2. Call widget when Twitter embed exists
+ * 3. Call renderer when OG embedding exists
+ *
+ * @param {string} content
+ */
 export const useClientAssets = (content) => {
   useEffect(() => {
     if (/<pre><code class=".*">.*/.test(content)) {

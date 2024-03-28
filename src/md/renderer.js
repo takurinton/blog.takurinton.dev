@@ -1,3 +1,6 @@
+/**
+ * markdown renderer for marked
+ */
 export const renderer = {
   heading(text, level) {
     if (level === 1) {
@@ -13,7 +16,7 @@ export const renderer = {
         </table>
       `;
   },
-  list(body: string, ordered: boolean, start: number) {
+  list(body, ordered, start) {
     if (ordered) {
       return `
           <ul style='padding-left: ${start}'>
