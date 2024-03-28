@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "hoofd": "1.7.0",
-    "marked": "9.1.2",
+    "marked": "12.0.0",
     "preact": "10.18.1",
     "preact-iso": "2.5.0"
   },
