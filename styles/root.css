@@ -65,3 +65,17 @@ body {
   min-height: var(--height);
   font-family: system-ui, sans-serif;
 }
+
+header {
+  display: flex;
+}
+
+header .header-title {
+  font-size: var(--font-size-xlarge);
+  color: var(--font-black);
+  padding: var(--padding-medium);
+}
+
+header .header-title:hover {
+  color: var(--color-primary-main);
+}

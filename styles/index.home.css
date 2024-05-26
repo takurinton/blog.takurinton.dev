@@ -20,13 +20,13 @@
   border-bottom: var(--border-bottom);
 }
 
-.title {
+.post-title {
   font-weight: 700;
   font-size: var(--font-size-xlarge);
   color: var(--color-black);
 }
 
-.title:hover {
+.post-title:hover {
   color: var(--color-primary-main);
 }
 
@@ -45,7 +45,7 @@
     margin: var(--margin-none) 10%;
   }
 
-  .title {
+  .post-title {
     font-size: var(--font-size-large);
   }
 

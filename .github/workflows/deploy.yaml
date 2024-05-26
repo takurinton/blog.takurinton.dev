@@ -1,0 +1,19 @@
+name: deploy
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+on:
+  push:
+    branches:
+      - main
+jobs:
+  Deploy-Production:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: install vercel cli
+        run: npm install --global vercel@latest
+      - name: build
+        run: cargo run
+      - name: deploy
+        run: vercel deploy --token ${{ secrets.VERCEL_TOKEN }} --prod
