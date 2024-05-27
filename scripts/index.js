@@ -2,7 +2,7 @@ const CACHE = new Map();
 
 /**
  * @param {string} url
- * @returns {Promise<{title: string, description: string, image: string}>}
+ * @returns {Promise<{title?: string, description?: string, image?: string}>}
  */
 const getMetaTags = async (url) => {
   if (!url) {
@@ -23,7 +23,7 @@ const getMetaTags = async (url) => {
  * @returns {Promise<string>}
  */
 export const getHtml = async (url, id) => {
-  const { title, description, image } = await getMetaTags(url);
+  const { title = "", description = "", image = "" } = await getMetaTags(url);
 
   return `
   <div class="og" id=${id}>

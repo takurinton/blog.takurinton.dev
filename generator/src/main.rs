@@ -157,6 +157,7 @@ impl Generator for HtmlGenerator {
         <link rel="stylesheet" href="/styles/root.css" />
         <link rel="stylesheet" href="/styles/index.post.css" />
         <meta name="twitter:card" content="summary" />
+        <meta property="og:title" content="{}" />
         <meta property="og:url" content="https://blog.takurinton.dev/" />
         <meta property="og:image" content="https://takurinton.dev/me.jpeg" />
         <meta property="twitter:url" content="https://blog.takurinton.dev/" />
@@ -178,7 +179,7 @@ impl Generator for HtmlGenerator {
     </body>
 </html>
 "#,
-            title, title, created_at, content
+            title, title, title, created_at, content
         )
     }
 
