@@ -3,6 +3,8 @@ extern crate markdown;
 use std::fs;
 use std::path::Path;
 
+use markdown::markdown_to_html;
+
 trait Generator {
     fn get_md_files(&self) -> Vec<String>;
     fn generate_styles(&self);
@@ -227,8 +229,7 @@ impl Generator for HtmlGenerator {
                 }
             };
 
-            let tokens = markdown::tokenize(&md);
-            let rendered_html = markdown::render_html(tokens);
+            let rendered_html = markdown_to_html(&md);
             let content = markdown::html_to_string(rendered_html);
             let content = truncate_to_char_boundary(&content, 300);
 
@@ -281,8 +282,8 @@ impl Generator for HtmlGenerator {
                     continue;
                 }
             };
-            let tokens = markdown::tokenize(&md);
-            let html = markdown::render_html(tokens);
+
+            let html = markdown_to_html(&md);
             let html = self.post_template(html, title, created_at);
 
             let pathname = md_file.replace(".md", "");
