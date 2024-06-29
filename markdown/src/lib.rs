@@ -34,6 +34,16 @@ pub fn get_frontmatter(input: &str) -> HashMap<String, String> {
     map
 }
 
+pub fn remove_frontmatter(input: &str) -> String {
+    let frontmatter_re = Regex::new(r"---\n([\s\S]*?)\n---\n\n([\s\S]*)").unwrap();
+    let captures = match frontmatter_re.captures(input) {
+        Some(captures) => captures,
+        None => return input.to_string(),
+    };
+
+    captures.get(2).unwrap().as_str().to_string()
+}
+
 pub fn html_to_string(html: String) -> String {
     // Markdownの一部の表現をプレーンテキストに変換
     let html_bold_italic_removed = html

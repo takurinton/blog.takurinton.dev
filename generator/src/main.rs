@@ -229,6 +229,7 @@ impl Generator for HtmlGenerator {
                 }
             };
 
+            let md = markdown::remove_frontmatter(&md);
             let rendered_html = markdown_to_html(&md);
             let content = markdown::html_to_string(rendered_html);
             let content = truncate_to_char_boundary(&content, 300);
@@ -283,6 +284,7 @@ impl Generator for HtmlGenerator {
                 }
             };
 
+            let md = markdown::remove_frontmatter(&md);
             let html = markdown_to_html(&md);
             let html = self.post_template(html, title, created_at);
 
