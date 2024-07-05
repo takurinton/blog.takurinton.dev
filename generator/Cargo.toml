@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 markdown = { path = "../markdown" }
+app = { path = "../app" }
