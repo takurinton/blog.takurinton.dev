@@ -134,8 +134,6 @@ impl Tokenizer {
 
         let block = Block { brace_token, stmts };
 
-        println!("block: {:?}", block);
-
         Ok(Token::Braced {
             block,
             span: brace_token.span.span(),
@@ -223,14 +221,12 @@ impl Parse for Token {
 #[proc_macro]
 pub fn render_to_string(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let parsed_input = parse_macro_input!(input as Render);
-    // let tokens = parsed_input.tokens;
+    let tokens = parsed_input.tokens;
 
-    // let parser = parser::Parser::new();
+    let parser = parser::Parser::new();
+    let html = parser.render_to_string(tokens);
 
-    // let html = parser.render_to_string(tokens);
-
-    let r = "";
-
+    let r = format!("\"{}\"", html);
     quote! {
         #r
     }

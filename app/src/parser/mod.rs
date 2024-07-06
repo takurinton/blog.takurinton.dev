@@ -1,3 +1,5 @@
+use std::fmt::format;
+
 use proc_macro::Ident;
 use quote::quote;
 
@@ -55,7 +57,8 @@ impl Parser {
 
     pub fn render_to_string(&self, tokens: Vec<Token>) -> proc_macro2::TokenStream {
         let mut tokens = tokens.into_iter();
-        let mut result = quote! { String::new() };
+        let mut result_string = String::new();
+        let mut result = quote! {};
 
         while let Some(token) = tokens.next() {
             // let next_token = tokens.next();
@@ -78,34 +81,48 @@ impl Parser {
                     let attributes = attributes.into_iter().map(|attr| {
                         let key = attr.key;
                         let value = attr.value;
-                        quote! { format!("{}={}", stringify!(#key), #value) }
+
+                        quote! {
+                            #key #value
+                        }
                     });
 
-                    quote! {
-                        format!(
-                            "<{} {}>",
-                            stringify!(#name),
-                            #(#attributes),*
-                        )
+                    // class="foo" id="app" のような attribute を parse する
+                    let mut attribute_string = String::new();
+                    for attr in attributes {
+                        let attr = attr.to_string();
+                        let attr_parts: Vec<&str> = attr.split_whitespace().collect();
+                        let key = attr_parts[0];
+                        let value = attr_parts[1];
+                        let attr_pair = format!(" {}={}", key, value);
+                        attribute_string.push_str(&attr_pair);
                     }
+
+                    let r;
+                    if attribute_string.is_empty() {
+                        r = format!("<{}>", name);
+                    } else {
+                        r = format!("<{}{}>", name, attribute_string);
+                    }
+
+                    r
                 }
                 Token::Close { name, close } => {
-                    quote! { format!("</{}>", stringify!(#name)) }
+                    format!("</{}>", name)
                 }
                 Token::Text {
                     content,
                     start,
                     end,
-                } => {
-                    quote! { format!("{}", #content) }
-                }
+                } => content,
                 Token::Braced { block, span } => {
-                    quote! { format!("{}", #block) }
+                    format!("{}", "ddd")
                 }
             };
 
+            result_string.push_str(&token);
             result = quote! {
-                format!("{}{}", #result, #token)
+                #result_string
             };
         }
 

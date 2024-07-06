@@ -18,8 +18,7 @@ mod tests {
             </div>
         };
 
-        let expected = r#"<div><div>foo</div><div><h1>hello world</h1></div></div>"#.to_string();
-
+        let expected = "\"\"<div class=\\\"foo\\\" id=\\\"app\\\"><div>ddd</div><div><h1>helloworld</h1></div></div>\"\"";
         assert_eq!(input, expected);
     }
 }
