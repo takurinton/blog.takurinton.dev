@@ -1,4 +1,4 @@
-use quote::quote;
+use quote::{quote, quote_each_token};
 
 use crate::Token;
 
@@ -54,78 +54,58 @@ impl Parser {
 
     pub fn render_to_string(&self, tokens: Vec<Token>) -> proc_macro2::TokenStream {
         let mut tokens = tokens.into_iter();
-        let mut result_string = String::new();
         let mut result = quote! {};
 
         while let Some(token) = tokens.next() {
-            // let next_token = tokens.next();
-            // let next = match next_token {
-            //     Some(token) => token,
-            //     None => Token::Text {
-            //         content: String::new(),
-            //         start: None,
-            //         end: None,
-            //     },
-            // };
-
-            let token = match token {
+            match token {
                 Token::Open {
                     name,
                     attributes,
-                    open: _,
-                    close: _,
+                    open,
+                    close,
                 } => {
-                    let attributes = attributes.into_iter().map(|attr| {
+                    let mut attributes = attributes.into_iter();
+                    let mut attrs = quote! {};
+
+                    while let Some(attr) = attributes.next() {
                         let key = attr.key;
                         let value = attr.value;
-
-                        quote! {
-                            #key #value
-                        }
-                    });
-
-                    // class="foo" id="app" のような attribute を parse する
-                    let mut attribute_string = String::new();
-                    for attr in attributes {
-                        let attr = attr.to_string();
-                        let attr_parts: Vec<&str> = attr.split_whitespace().collect();
-                        let key = attr_parts[0];
-                        let value = attr_parts[1];
-                        let attr_pair = format!(" {}={}", key, value);
-                        attribute_string.push_str(&attr_pair);
+                        attrs = quote! { #attrs #key: #value, };
                     }
 
-                    let r;
-                    if attribute_string.is_empty() {
-                        r = format!("<{}>", name);
-                    } else {
-                        r = format!("<{}{}>", name, attribute_string);
-                    }
-
-                    r
+                    result = quote! {
+                        #result
+                        let #name = Element::new(#name, {
+                            #attrs
+                        });
+                    };
                 }
-                Token::Close { name, close: _ } => {
-                    format!("</{}>", name)
+                Token::Close { name, close } => {
+                    result = quote! {
+                        #result
+                        #name.close();
+                    };
                 }
                 Token::Text {
                     content,
-                    start: _,
-                    end: _,
-                } => content,
-                Token::Braced { block, span: _ } => {
-                    let r = quote! {
+                    start,
+                    end,
+                } => {
+                    result = quote! {
+                        #result
+                        quote! { #content };
+                    };
+                }
+                Token::Braced { block, span } => {
+                    result = quote! {
+                        #result
                         #block
                     };
-
-                    r.to_string()
                 }
-            };
-
-            result_string.push_str(&token);
-            result = quote! {
-                #result_string
-            };
+            }
         }
+
+        println!("{:?}", result);
 
         result
     }

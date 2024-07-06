@@ -134,6 +134,8 @@ impl Tokenizer {
 
         let block = Block { brace_token, stmts };
 
+        println!("{:?}", block);
+
         Ok(Token::Braced {
             block,
             span: brace_token.span.span(),
