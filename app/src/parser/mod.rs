@@ -1,14 +1,11 @@
-use std::fmt::format;
-
-use proc_macro::Ident;
 use quote::quote;
 
 use crate::Token;
 
 pub(crate) struct Parser {
-    tokens: Vec<proc_macro2::TokenStream>,
-    current_index: usize,
-    parent: Vec<(usize, Ident)>,
+    // tokens: Vec<proc_macro2::TokenStream>,
+    // current_index: usize,
+    // parent: Vec<(usize, Ident)>,
 }
 
 /// html をパースして TokenStream に変換する
@@ -17,9 +14,9 @@ pub(crate) struct Parser {
 impl Parser {
     pub fn new() -> Self {
         Parser {
-            tokens: Vec::new(),
-            current_index: 0,
-            parent: Vec::new(),
+            // tokens: Vec::new(),
+            // current_index: 0,
+            // parent: Vec::new(),
         }
     }
 
@@ -75,8 +72,8 @@ impl Parser {
                 Token::Open {
                     name,
                     attributes,
-                    open,
-                    close,
+                    open: _,
+                    close: _,
                 } => {
                     let attributes = attributes.into_iter().map(|attr| {
                         let key = attr.key;
@@ -107,16 +104,20 @@ impl Parser {
 
                     r
                 }
-                Token::Close { name, close } => {
+                Token::Close { name, close: _ } => {
                     format!("</{}>", name)
                 }
                 Token::Text {
                     content,
-                    start,
-                    end,
+                    start: _,
+                    end: _,
                 } => content,
-                Token::Braced { block, span } => {
-                    format!("{}", "ddd")
+                Token::Braced { block, span: _ } => {
+                    let r = quote! {
+                        #block
+                    };
+
+                    r.to_string()
                 }
             };
 

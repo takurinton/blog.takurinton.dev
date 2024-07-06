@@ -2,7 +2,6 @@ extern crate proc_macro;
 
 mod parser;
 
-use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenTree};
 use quote::quote;
 use syn::__private::ToTokens;
@@ -128,9 +127,10 @@ impl Tokenizer {
     // {variable} 的な
     fn braced(self, input: &mut ParseStream) -> Result<Token> {
         let content;
-
         let brace_token = braced!(content in input);
+
         let stmts = content.call(Block::parse_within)?;
+        println!("{:?}", stmts);
 
         let block = Block { brace_token, stmts };
 
@@ -208,7 +208,7 @@ impl Parse for Token {
             }
         }
 
-        // {} で Rust の式を埋め込むことができるようにする
+        // {} で式を埋め込むことができるようにする
         if input.peek(Brace) {
             return tokenizer.braced(&mut input);
         }
@@ -226,9 +226,11 @@ pub fn render_to_string(input: proc_macro::TokenStream) -> proc_macro::TokenStre
     let parser = parser::Parser::new();
     let html = parser.render_to_string(tokens);
 
-    let r = format!("\"{}\"", html);
-    quote! {
+    let r = format!("{}", html);
+    let r = quote! {
         #r
     }
-    .into()
+    .into();
+
+    r
 }
