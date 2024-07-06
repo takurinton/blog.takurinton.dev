@@ -219,14 +219,14 @@ impl Parse for Token {
     }
 }
 
-// render_to_string! { <div class="foo" id="app"></div> } -> "<div class="foo" id="app"></div>
+// render! { <div class="foo" id="app"></div> } -> "<div class="foo" id="app"></div>
 #[proc_macro]
-pub fn render_to_string(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+pub fn render(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let parsed_input = parse_macro_input!(input as Render);
     let tokens = parsed_input.tokens;
 
     let parser = parser::Parser::new();
-    let html = parser.render_to_string(tokens);
+    let html = parser.render(tokens);
 
     let r = format!("{}", html);
     let r = quote! {

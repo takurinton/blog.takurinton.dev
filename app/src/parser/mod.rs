@@ -52,7 +52,7 @@ impl Parser {
     //     quote! {}
     // }
 
-    pub fn render_to_string(&self, tokens: Vec<Token>) -> proc_macro2::TokenStream {
+    pub fn render(&self, tokens: Vec<Token>) -> proc_macro2::TokenStream {
         let mut tokens = tokens.into_iter();
         let mut result = quote! {};
 
@@ -104,8 +104,6 @@ impl Parser {
                 }
             }
         }
-
-        println!("{:?}", result);
 
         result
     }
