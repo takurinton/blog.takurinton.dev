@@ -240,7 +240,7 @@ pub fn render(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let tokens = parsed_input.tokens;
 
     let mut parser = parser::Parser::new();
-    let tokens = parser.create_node(tokens);
+    let node = parser.create_node(tokens);
 
-    tokens.into()
+    node.into()
 }
