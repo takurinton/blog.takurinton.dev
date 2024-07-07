@@ -2,7 +2,11 @@ extern crate proc_macro;
 
 mod parser;
 
-use proc_macro2::{Span, TokenTree};
+use std::fmt::format;
+
+use js_sys::JSON::stringify;
+use markdown::token;
+use proc_macro2::{Span, TokenStream, TokenTree};
 use quote::quote;
 use syn::__private::ToTokens;
 use syn::parse::{Parse, ParseStream};
@@ -51,7 +55,9 @@ impl Tokenizer {
                 let token_tree = input.parse::<TokenTree>()?;
                 value_tokens.extend(Some(token_tree));
 
-                // >(閉じタグ)か /(というか /> を期待している)か=(次のattrを読みにいってほしい) があれば終了
+                // > があれば終了(/> で終了する場合)
+                // / があれば終了(/> で終了する場合)
+                // = があれば終了(次の attribute を読みにいく)
                 if input.peek(Token![>]) || input.peek(Token![/]) || input.peek2(Token![=]) {
                     break;
                 }
@@ -62,7 +68,7 @@ impl Tokenizer {
             attributes.push(Attribute {
                 key: key.clone().into_token_stream(),
                 value,
-                span: key.clone().span(),
+                span: key.span(),
             });
         }
 
@@ -129,12 +135,9 @@ impl Tokenizer {
         let content;
         let brace_token = braced!(content in input);
 
-        let stmts = content.call(Block::parse_within)?;
-        println!("{:?}", stmts);
-
-        let block = Block { brace_token, stmts };
-
-        println!("{:?}", block);
+        // TODO: content.call(syn::Block::parse_within) で複数の式を parse できるようにする
+        // let blocks = content.call(Block::parse_within)?;
+        let block = content.parse::<Expr>()?;
 
         Ok(Token::Braced {
             block,
@@ -148,6 +151,16 @@ struct Attribute {
     key: proc_macro2::TokenStream,
     value: Expr,
     span: Span,
+}
+
+impl Attribute {
+    fn key_string(&self) -> String {
+        self.key.to_string()
+    }
+
+    fn value_string(&self) -> String {
+        self.value.to_token_stream().to_string()
+    }
 }
 
 #[derive(Debug)]
@@ -169,7 +182,7 @@ enum Token {
     },
     // 今のところこれだけあれば十分な気がする
     Braced {
-        block: Block, // Box<Block> かも
+        block: Expr,
         span: Span,
     },
 }
@@ -219,20 +232,15 @@ impl Parse for Token {
     }
 }
 
-// render! { <div class="foo" id="app"></div> } -> "<div class="foo" id="app"></div>
+/// let foo = "hello world";
+/// render! { <div class="foo" id="app">{foo}</div> } -> "<div class="foo" id="app">hello world</div>
 #[proc_macro]
 pub fn render(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let parsed_input = parse_macro_input!(input as Render);
     let tokens = parsed_input.tokens;
 
-    let parser = parser::Parser::new();
-    let html = parser.render(tokens);
+    let mut parser = parser::Parser::new();
+    let tokens = parser.create_node(tokens);
 
-    let r = format!("{}", html);
-    let r = quote! {
-        #r
-    }
-    .into();
-
-    r
+    tokens.into()
 }

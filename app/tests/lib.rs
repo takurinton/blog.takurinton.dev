@@ -10,15 +10,11 @@ mod tests {
     fn test_render() {
         let html = markdown_to_html("# hello world");
         let input = render! {
-            <div class="foo" id="app">
-                <div>{ html }</div>
-                <div>
-                    <h1>hello world</h1>
-                </div>
-            </div>
-        };
+            <div></div>
+        }
+        .to_string();
 
-        let expected = "\"<div class=\\\"foo\\\" id=\\\"app\\\"><div><h1>hello world</h1></div><div><h1>helloworld</h1></div></div>\"";
+        let expected = "<div class=\"foo\" id=\"app\"><div><h1>hello world</h1></div><div><p>hoge</p></div></div>";
         assert_eq!(input, expected);
     }
 }
