@@ -38,8 +38,8 @@ pub fn generate_html(tokens: VecDeque<Token>) -> String {
             }
             Token::CodeBlock { language, content } => {
                 output.push_str(&format!(
-                    "<pre><code class=\"language-{}\">{}</code></pre>\n",
-                    language, content
+                    "<div class=\"language-name\">{}</div><pre><code class=\"language-{}\">{}</code></pre>\n",
+                    language, language, content
                 ));
             }
             Token::InlineCode(content) => {
