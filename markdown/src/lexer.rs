@@ -1,3 +1,5 @@
+use std::vec;
+
 use crate::token::Token;
 
 pub struct Lexer<'a> {
@@ -54,7 +56,7 @@ impl<'a> Lexer<'a> {
                 if self.peek_char() == Some(' ') {
                     Some(self.read_list())
                 } else {
-                    Some(self.read_text())
+                    Some(self.read_paragraph())
                 }
             }
             Some('`') => Some(self.read_code_block_or_inline_code()),
@@ -63,7 +65,7 @@ impl<'a> Lexer<'a> {
                 if self.peek_char() == Some('[') {
                     Some(self.read_image())
                 } else {
-                    Some(self.read_text())
+                    Some(self.read_paragraph())
                 }
             }
             // Some('1') => {
@@ -77,7 +79,7 @@ impl<'a> Lexer<'a> {
                 if self.peek_char() == Some(' ') {
                     Some(self.read_break())
                 } else {
-                    Some(self.read_text())
+                    Some(self.read_paragraph())
                 }
             }
 
@@ -89,10 +91,10 @@ impl<'a> Lexer<'a> {
                 } else if self.peek_char() == Some('t') {
                     Some(self.read_twitter())
                 } else {
-                    Some(self.read_text())
+                    Some(self.read_paragraph())
                 }
             }
-            Some(_) => Some(self.read_text()),
+            Some(_) => Some(self.read_paragraph()),
             None => None,
         }
     }
@@ -279,18 +281,18 @@ impl<'a> Lexer<'a> {
         Token::InlineCode(content)
     }
 
-    fn read_quote(&mut self) -> Token {
-        self.read_char();
-        self.read_char();
-        let start = self.position;
-        while let Some(ch) = self.ch {
-            if ch == '\n' {
-                break;
-            }
-            self.read_char();
-        }
-        Token::BlockQuote(self.input[start..self.position].to_string())
-    }
+    // fn read_quote(&mut self) -> Token {
+    //     self.read_char();
+    //     self.read_char();
+    //     let start = self.position;
+    //     while let Some(ch) = self.ch {
+    //         if ch == '\n' {
+    //             break;
+    //         }
+    //         self.read_char();
+    //     }
+    //     Token::BlockQuote(self.input[start..self.position].to_string())
+    // }
 
     fn read_image(&mut self) -> Token {
         self.read_char();
@@ -332,15 +334,65 @@ impl<'a> Lexer<'a> {
         Token::Break
     }
 
-    fn read_text(&mut self) -> Token {
+    fn read_plain_text_chunk(&mut self) -> Token {
         let start = self.position;
         while let Some(ch) = self.ch {
             if ch == '\n' {
                 break;
             }
+            if ch == '[' || ch == '`' || ch == '*' || (ch == '!' && self.peek_char() == Some('[')) {
+                break;
+            }
+            // "  " は read_inline_until_eol() 側で Break にするのでここはそのまま進める
             self.read_char();
         }
-        Token::Paragraph(self.input[start..self.position].to_string())
+        Token::Text(self.input[start..self.position].to_string())
+    }
+
+    fn read_inline_until_eol(&mut self) -> Vec<Token> {
+        let mut parts = Vec::new();
+
+        while let Some(ch) = self.ch {
+            if ch == '\n' {
+                break;
+            }
+
+            // インラインディスパッチ
+            let tok = match ch {
+                '[' => Some(self.read_link()),
+                '`' => Some(self.read_inline_code()),
+                '*' => Some(self.read_italic_or_bold()),
+                '!' if self.peek_char() == Some('[') => Some(self.read_image()),
+                ' ' if self.peek_char() == Some(' ') => {
+                    // 2スペース -> 改行（<br>）として扱う既存仕様に合わせる
+                    self.read_break(); // 位置は進むので OK
+                    Some(Token::Break)
+                }
+                _ => Some(self.read_plain_text_chunk()),
+            };
+
+            if let Some(t) = tok {
+                parts.push(t);
+            }
+        }
+
+        parts
+    }
+
+    fn read_paragraph(&mut self) -> Token {
+        let parts = self.read_inline_until_eol();
+        Token::Paragraph(parts)
+    }
+
+    fn read_quote(&mut self) -> Token {
+        // ">" を読み飛ばし、続く半角スペースもあれば読み飛ばす
+        self.read_char();
+        if self.ch == Some(' ') {
+            self.read_char();
+        }
+
+        let parts = self.read_inline_until_eol();
+        Token::BlockQuote(parts)
     }
 
     // fn read_ordered_list(&mut self) -> Token {}
@@ -352,7 +404,7 @@ impl<'a> Lexer<'a> {
         self.read_char();
 
         if self.peek_char() != Some('[') {
-            return Token::Paragraph(content);
+            return Token::Paragraph(vec![Token::Text(content)]);
         }
 
         self.read_char();
@@ -387,7 +439,7 @@ impl<'a> Lexer<'a> {
         self.read_char();
 
         if self.peek_char() != Some('[') {
-            return Token::Paragraph(content);
+            return Token::Paragraph(vec![Token::Text(content)]);
         }
 
         self.read_char();
@@ -488,15 +540,29 @@ mod tests {
         let input = "Normal text\n";
         let mut lexer = Lexer::new(input);
         let token = lexer.next_token();
-        assert_eq!(token, Some(Token::Paragraph("Normal text".to_string())));
+        assert_eq!(
+            token,
+            Some(Token::Paragraph(vec![Token::Text(
+                "Normal text".to_string()
+            )]))
+        );
     }
 
     #[test]
     fn test_next_token_paragraph2() {
-        let input = "SHA-256\n";
+        let input = "Normal text with link[Link](https://example.com)\n";
         let mut lexer = Lexer::new(input);
         let token = lexer.next_token();
-        assert_eq!(token, Some(Token::Paragraph("SHA-256".to_string())));
+        assert_eq!(
+            token,
+            Some(Token::Paragraph(vec![
+                Token::Text("Normal text with link".to_string()),
+                Token::Link {
+                    text: "Link".to_string(),
+                    url: "https://example.com".to_string()
+                }
+            ]))
+        );
     }
 
     #[test]
@@ -591,7 +657,10 @@ mod tests {
         let input = "> Quote\n";
         let mut lexer = Lexer::new(input);
         let token = lexer.next_token();
-        assert_eq!(token, Some(Token::BlockQuote("Quote".to_string())));
+        assert_eq!(
+            token,
+            Some(Token::BlockQuote(vec![Token::Text("Quote".to_string())]))
+        );
     }
 
     #[test]
