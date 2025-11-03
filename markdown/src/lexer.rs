@@ -470,6 +470,20 @@ mod tests {
     }
 
     #[test]
+    fn test_next_token_link2() {
+        let input = "[Link(linkですよー)](https://example.com)\n";
+        let mut lexer = Lexer::new(input);
+        let token = lexer.next_token();
+        assert_eq!(
+            token,
+            Some(Token::Link {
+                text: "Link(linkですよー)".to_string(),
+                url: "https://example.com".to_string()
+            })
+        );
+    }
+
+    #[test]
     fn test_next_token_paragraph() {
         let input = "Normal text\n";
         let mut lexer = Lexer::new(input);

@@ -149,7 +149,8 @@ mod tests {
             content: "fn main() {\n    println!(\"Hello, world!\");\n}\n".to_string(),
         }]);
         let html = generate_html(tokens);
-        assert_eq!(html, "<pre><code class=\"language-rust\">fn main() {\n    println!(\"Hello, world!\");\n}\n</code></pre>\n");
+        println!("{}", html);
+        assert_eq!(html, "<div class=\"language-name\">rust</div><pre><code class=\"language-rust\">fn main() {\n    println!(\"Hello, world!\");\n}\n</code></pre>\n");
     }
 
     #[test]
