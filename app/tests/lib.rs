@@ -48,4 +48,25 @@ mod tests {
             "<div class=\"foo\"></div>"
         );
     }
+
+    #[test]
+    fn test_description_pr() {
+        let title = "hello";
+        let created_at = "2024-01-01";
+        let rendered_html = markdown_to_html("this is a paragraph.");
+        let id = 1;
+        let href = format!("/post/{}/index.html", id);
+
+        assert_eq!(
+        render! {
+            <div class="post">
+            <a class="post-title" href={href}>{title}</a>
+                <p class="date">{created_at}</p>
+                <p class="description">{markdown::html_to_string(rendered_html)}</p>
+            </div>
+        }
+        .to_string(),
+        "<div class=\"post\"><a class=\"post-title\" href=\"/post/1/index.html\">hello</a><p class=\"date\">2024-01-01</p><p class=\"description\">this is a paragraph. </p></div>"
+    );
+    }
 }
