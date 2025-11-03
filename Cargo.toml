@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "markdown",
+    "generator",
+    "app"
+]
