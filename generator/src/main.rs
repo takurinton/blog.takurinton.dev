@@ -165,6 +165,14 @@ impl Generator for HtmlGenerator {
         <meta property="twitter:url" content="https://blog.takurinton.dev/" />
         <meta property="twitter:image" content="https://takurinton.dev/me.jpeg" />
         <meta name="description" content="takurinton blog" />
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+
+        <!-- and it's easy to individually load additional languages -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+
+        <script>hljs.highlightAll();</script>
     </head>
     <body>
     <header class="header">

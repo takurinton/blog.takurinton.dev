@@ -52,7 +52,8 @@ mod tests {
         assert_eq!(tokens.len(), 1);
         match tokens.get(0).unwrap() {
             Token::Paragraph(content) => {
-                assert_eq!(content, "Normal");
+                assert_eq!(content.len(), 1);
+                assert_eq!(content[0], Token::Text("Normal".to_string()));
             }
             _ => panic!("Unexpected token"),
         }
@@ -164,7 +165,11 @@ mod tests {
         assert_eq!(tokens.len(), 1);
         match tokens.get(0).unwrap() {
             Token::BlockQuote(content) => {
-                assert_eq!(content, "This is a block quote.");
+                assert_eq!(content.len(), 1);
+                assert_eq!(
+                    content[0],
+                    Token::Text("This is a block quote.".to_string())
+                );
             }
             _ => panic!("Unexpected token"),
         }

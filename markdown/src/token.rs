@@ -10,10 +10,8 @@ pub enum Token {
     Link { text: String, url: String },
     CodeBlock { language: String, content: String },
     InlineCode(String),
-    // TODO: Token 渡せるようにする
-    Paragraph(String),
-    // TODO: Token 渡せるようにする
-    BlockQuote(String),
+    Paragraph(Vec<Token>),
+    BlockQuote(Vec<Token>),
     Image { src: String, alt: String },
     Break,
     Empty,

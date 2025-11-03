@@ -25,7 +25,8 @@ pub fn generate_html(tokens: VecDeque<Token>) -> String {
                 }
             }
             Token::Paragraph(content) => {
-                output.push_str(&format!("<p>{}</p>\n", content));
+                let paragraph_content = generate_html(VecDeque::from(content));
+                output.push_str(&format!("<p>{}</p>\n", paragraph_content.trim()));
             }
             Token::Bold(content) => {
                 output.push_str(&format!("<strong>{}</strong>\n", content));
@@ -38,15 +39,19 @@ pub fn generate_html(tokens: VecDeque<Token>) -> String {
             }
             Token::CodeBlock { language, content } => {
                 output.push_str(&format!(
-                    "<pre><code class=\"language-{}\">{}</code></pre>\n",
-                    language, content
+                    "<div class=\"language-name\">{}</div><pre><code class=\"language-{}\">{}</code></pre>\n",
+                    language, language, content
                 ));
             }
             Token::InlineCode(content) => {
                 output.push_str(&format!("<code>{}</code>\n", content));
             }
             Token::BlockQuote(content) => {
-                output.push_str(&format!("<blockquote>{}</blockquote>\n", content));
+                let quote_content = generate_html(VecDeque::from(content));
+                output.push_str(&format!(
+                    "<blockquote>{}</blockquote>\n",
+                    quote_content.trim()
+                ));
             }
             Token::Image { src, alt } => {
                 output.push_str(&format!("<img src=\"{}\" alt=\"{}\" />\n", src, alt));
@@ -113,7 +118,10 @@ mod tests {
 
     #[test]
     fn test_generate_html_paragraph() {
-        let tokens = VecDeque::from(vec![Token::Paragraph("Normal text here.".to_string())]);
+        // let tokens = VecDeque::from(vec![Token::Paragraph("Normal text here.".to_string())]);
+        let tokens = VecDeque::from(vec![Token::Paragraph(vec![Token::Text(
+            "Normal text here.".to_string(),
+        )])]);
         let html = generate_html(tokens);
         assert_eq!(html, "<p>Normal text here.</p>\n");
     }
@@ -149,7 +157,8 @@ mod tests {
             content: "fn main() {\n    println!(\"Hello, world!\");\n}\n".to_string(),
         }]);
         let html = generate_html(tokens);
-        assert_eq!(html, "<pre><code class=\"language-rust\">fn main() {\n    println!(\"Hello, world!\");\n}\n</code></pre>\n");
+        println!("{}", html);
+        assert_eq!(html, "<div class=\"language-name\">rust</div><pre><code class=\"language-rust\">fn main() {\n    println!(\"Hello, world!\");\n}\n</code></pre>\n");
     }
 
     #[test]
@@ -161,9 +170,9 @@ mod tests {
 
     #[test]
     fn test_generate_html_block_quote() {
-        let tokens = VecDeque::from(vec![Token::BlockQuote(
+        let tokens = VecDeque::from(vec![Token::BlockQuote(vec![Token::Text(
             "This is a block quote.".to_string(),
-        )]);
+        )])]);
         let html = generate_html(tokens);
         assert_eq!(html, "<blockquote>This is a block quote.</blockquote>\n");
     }
@@ -233,12 +242,28 @@ mod tests {
             ]),
             // Token::ListItem("Item 2".to_string()),
             // Token::ListItem("Item 3".to_string()),
-            Token::Paragraph("Normal text here.".to_string()),
+            Token::Paragraph(vec![Token::Text("Normal text here.".to_string())]),
         ]);
         let html = generate_html(tokens);
         assert_eq!(
             html,
             "<h1>Title</h1>\n<h2>Subtitle</h2>\n<h3>Sub-subtitle</h3>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n<p>Normal text here.</p>\n"
+        );
+    }
+
+    #[test]
+    fn test_generate_html2() {
+        let tokens = VecDeque::from(vec![Token::Paragraph(vec![
+            Token::Text("Normal text with link".to_string()),
+            Token::Link {
+                text: "Link".to_string(),
+                url: "https://example.com".to_string(),
+            },
+        ])]);
+        let html = generate_html(tokens);
+        assert_eq!(
+            html,
+            "<p>Normal text with link\n<a href=\"https://example.com\">Link</a></p>\n"
         );
     }
 }
