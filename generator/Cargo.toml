@@ -1,0 +1,11 @@
+[package]
+name = "generator"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+crustal-blog-utils = { git = "https://github.com/takurinton/crustal.git" }
+crustal-markdown = { git = "https://github.com/takurinton/crustal.git" }
+site = { path = "../site" }

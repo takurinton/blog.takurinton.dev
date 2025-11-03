@@ -1,0 +1,40 @@
+name: deploy
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "CLAUDE.md"
+      - "README.md"
+      - ".claude/**"
+jobs:
+  Deploy-Production:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: configure crustal access
+        env:
+          CRUSTAL_SSH_KEY: ${{ secrets.CRUSTAL_SSH_KEY }}
+        run: |
+          test -n "$CRUSTAL_SSH_KEY"
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          eval "$(ssh-agent -s)"
+          ssh-add - <<< "$CRUSTAL_SSH_KEY"
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          git config --global url."ssh://git@github.com/".insteadOf "https://github.com/"
+      - name: add wasm32 target
+        run: rustup target add wasm32-unknown-unknown
+      - name: install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - name: install vercel cli
+        run: npm install --global vercel@latest
+      - name: build ssg
+        run: cargo run -p generator
+      - name: build wasm
+        run: wasm-pack build site --target web --out-dir ../dist/scripts/pkg/
+      - name: deploy
+        run: vercel deploy --token ${{ secrets.VERCEL_TOKEN }} --prod

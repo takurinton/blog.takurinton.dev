@@ -1,0 +1,82 @@
+{
+  "version": "1.0",
+  "project": {
+    "name": "blog.takurinton.dev",
+    "type": "static-site-generator",
+    "language": "rust",
+    "crates": {
+      "markdown": "Markdownパーサーライブラリ",
+      "app": "proc-macro (render! マクロ)",
+      "generator": "HTMLビルドバイナリ"
+    }
+  },
+  "settings": {
+    "defaultModel": "sonnet",
+    "autoSave": true,
+    "contextFiles": [
+      "Cargo.toml",
+      "generator/src/main.rs",
+      "markdown/src/lib.rs",
+      "app/src/lib.rs"
+    ]
+  },
+  "codex": {
+    "suppressUnstableFeaturesWarning": true,
+    "askForApproval": "never",
+    "sandbox": "danger-full-access"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/post-edit.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/user-prompt-submit.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "skills": {
+    "create-pr": {
+      "description": "ブランチを切ってプルリクエストを作成する",
+      "path": ".claude/skills/create-pr/SKILL.md"
+    },
+    "improve-skill": {
+      "description": "フィードバックを受け取り、.claude配下のskillや設定を自己改善する",
+      "path": ".claude/skills/improve-skill/SKILL.md"
+    },
+    "update-readme": {
+      "description": "README.md をコードベースの現状に合わせて更新する",
+      "path": ".claude/skills/update-readme/SKILL.md"
+    },
+    "new-post": {
+      "description": "新しいブログ記事を posts/ に作成する",
+      "path": ".claude/skills/new-post/SKILL.md"
+    },
+    "build": {
+      "description": "cargo run でブログをビルドして dist/ に HTML を生成する",
+      "path": ".claude/skills/build/SKILL.md"
+    },
+    "test": {
+      "description": "cargo test / fmt / clippy でテスト・品質チェックを実行する",
+      "path": ".claude/skills/test/SKILL.md"
+    },
+    "add-markdown-feature": {
+      "description": "Markdownパーサーまたはジェネレーターに新機能を追加する",
+      "path": ".claude/skills/add-markdown-feature/SKILL.md"
+    }
+  }
+}
