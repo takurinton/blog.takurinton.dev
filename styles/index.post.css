@@ -33,6 +33,14 @@ img {
   border-radius: 8px 8px 0px 0px;
 }
 
+blockquote {
+  border-left: 4px solid #ccc;
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  color: #555;
+  font-style: italic;
+}
+
 /* magic number ok */
 pre {
   font-size: 16px;
