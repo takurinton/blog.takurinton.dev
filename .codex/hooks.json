@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/bash \".claude/hooks/post-edit.sh\""
+          }
+        ],
+        "matcher": "Edit"
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/bash \".claude/hooks/user-prompt-submit.sh\""
+          }
+        ],
+        "matcher": "*"
+      }
+    ]
+  }
+}
