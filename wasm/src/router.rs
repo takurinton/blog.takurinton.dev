@@ -124,37 +124,7 @@ fn load_page(href: &str) {
             doc.set_title(&new_title.text_content().unwrap_or_default());
         }
 
-        // Load scripts from new page's <head> (e.g. highlight.js)
-        if let Some(new_head) = new_doc.query_selector("head").unwrap() {
-            let new_scripts = new_head.query_selector_all("script").unwrap();
-            let head = doc.head().unwrap();
-
-            // Remove previously injected scripts
-            let old_scripts = head
-                .query_selector_all("script[data-spa-injected]")
-                .unwrap();
-            for i in 0..old_scripts.length() {
-                if let Some(node) = old_scripts.get(i) {
-                    let _ = head.remove_child(&node);
-                }
-            }
-
-            for i in 0..new_scripts.length() {
-                if let Some(node) = new_scripts.get(i) {
-                    let el: &Element = node.dyn_ref::<Element>().unwrap();
-                    let script = doc.create_element("script").unwrap();
-                    script.set_attribute("data-spa-injected", "").unwrap();
-
-                    if let Some(src) = el.get_attribute("src") {
-                        // External script: set src to load it
-                        script.set_attribute("src", &src).unwrap();
-                    } else {
-                        // Inline script: copy text content
-                        script.set_text_content(el.text_content().as_deref());
-                    }
-                    head.append_child(&script).unwrap();
-                }
-            }
-        }
+        // Re-run highlight.js (loaded globally on all pages)
+        let _ = js_sys::eval("if(typeof hljs !== 'undefined') hljs.highlightAll()");
     });
 }

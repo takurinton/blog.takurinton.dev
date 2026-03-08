@@ -123,6 +123,8 @@ impl Generator for HtmlGenerator {
                 <meta property="twitter:url" content="https://blog.takurinton.dev/"></meta>
                 <meta property="twitter:image" content="https://takurinton.dev/me.jpeg"></meta>
                 <meta name="description" content="takurinton blog"></meta>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
             </head>
             <body>
                 <header class="header">
