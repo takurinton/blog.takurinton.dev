@@ -70,9 +70,7 @@ pub fn document(props: DocumentProps) -> String {
                     href="https://takurinton.dev/favicon.ico"
                     type="image/x-icon"
                 ></link>
-                <link rel="stylesheet" href="/styles/root.css"></link>
-                <link rel="stylesheet" href="/styles/index.home.css"></link>
-                <link rel="stylesheet" href="/styles/index.post.css"></link>
+                <link rel="stylesheet" href="/styles/style.css"></link>
                 {hljs_css}
                 <meta name="twitter:card" content="summary"></meta>
                 {og_title_meta}
