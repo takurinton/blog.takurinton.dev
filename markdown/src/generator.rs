@@ -17,6 +17,10 @@ fn generate_inline_html(tokens: VecDeque<Token>) -> String {
                 output.push_str(&format!("<a href=\"{}\">{}</a>", url, text));
             }
             Token::InlineCode(content) => {
+                let content = content
+                    .replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;");
                 output.push_str(&format!("<code>{}</code>", content));
             }
             Token::Image { src, alt } => {
@@ -72,6 +76,10 @@ pub fn generate_html(tokens: VecDeque<Token>) -> String {
                 ));
             }
             Token::InlineCode(content) => {
+                let content = content
+                    .replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;");
                 output.push_str(&format!("<code>{}</code>\n", content));
             }
             Token::BlockQuote(content) => {
