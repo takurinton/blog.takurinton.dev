@@ -2,6 +2,42 @@ use std::collections::VecDeque;
 
 use crate::token::Token;
 
+fn generate_inline_html(tokens: VecDeque<Token>) -> String {
+    let mut output = String::new();
+
+    for token in tokens {
+        match token {
+            Token::Bold(content) => {
+                output.push_str(&format!("<strong>{}</strong>", content));
+            }
+            Token::Italic(content) => {
+                output.push_str(&format!("<em>{}</em>", content));
+            }
+            Token::Link { text, url } => {
+                output.push_str(&format!("<a href=\"{}\">{}</a>", url, text));
+            }
+            Token::InlineCode(content) => {
+                output.push_str(&format!("<code>{}</code>", content));
+            }
+            Token::Image { src, alt } => {
+                output.push_str(&format!("<img src=\"{}\" alt=\"{}\" />", src, alt));
+            }
+            Token::Break => {
+                output.push_str("<br />");
+            }
+            Token::Text(content) => {
+                output.push_str(&content);
+            }
+            _ => {
+                // ブロックレベルのトークンがインラインコンテキストに来た場合はそのまま
+                output.push_str(&generate_html(VecDeque::from(vec![token])));
+            }
+        }
+    }
+
+    output
+}
+
 pub fn generate_html(tokens: VecDeque<Token>) -> String {
     let mut output = String::new();
 
@@ -11,21 +47,11 @@ pub fn generate_html(tokens: VecDeque<Token>) -> String {
                 output.push_str(&format!("<h{}>{}</h{}>\n", level, content, level));
             }
             Token::ListItem(content) => {
-                for token in content {
-                    match token {
-                        Token::Text(text) => {
-                            output.push_str(&format!("<li>{}</li>\n", text));
-                        }
-                        Token::Link { text, url } => {
-                            output
-                                .push_str(&format!("<li><a href=\"{}\">{}</a></li>\n", url, text));
-                        }
-                        _ => {}
-                    }
-                }
+                let inner = generate_inline_html(VecDeque::from(content));
+                output.push_str(&format!("<li>{}</li>\n", inner));
             }
             Token::Paragraph(content) => {
-                let paragraph_content = generate_html(VecDeque::from(content));
+                let paragraph_content = generate_inline_html(VecDeque::from(content));
                 output.push_str(&format!("<p>{}</p>\n", paragraph_content.trim()));
             }
             Token::Bold(content) => {
@@ -49,7 +75,7 @@ pub fn generate_html(tokens: VecDeque<Token>) -> String {
                 output.push_str(&format!("<code>{}</code>\n", content));
             }
             Token::BlockQuote(content) => {
-                let quote_content = generate_html(VecDeque::from(content));
+                let quote_content = generate_inline_html(VecDeque::from(content));
                 output.push_str(&format!(
                     "<blockquote>{}</blockquote>\n",
                     quote_content.trim()
@@ -63,6 +89,21 @@ pub fn generate_html(tokens: VecDeque<Token>) -> String {
             }
             Token::Text(content) => {
                 output.push_str(&format!("{}\n", content));
+            }
+            Token::Table { headers, rows } => {
+                output.push_str("<table>\n<thead>\n<tr>\n");
+                for header in &headers {
+                    output.push_str(&format!("<th>{}</th>\n", header));
+                }
+                output.push_str("</tr>\n</thead>\n<tbody>\n");
+                for row in &rows {
+                    output.push_str("<tr>\n");
+                    for cell in row {
+                        output.push_str(&format!("<td>{}</td>\n", cell));
+                    }
+                    output.push_str("</tr>\n");
+                }
+                output.push_str("</tbody>\n</table>\n");
             }
             Token::LinkCard(content) => {
                 output.push_str(&format!(
@@ -249,7 +290,42 @@ mod tests {
         let html = generate_html(tokens);
         assert_eq!(
             html,
-            "<h1>Title</h1>\n<h2>Subtitle</h2>\n<h3>Sub-subtitle</h3>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n<p>Normal text here.</p>\n"
+            "<h1>Title</h1>\n<h2>Subtitle</h2>\n<h3>Sub-subtitle</h3>\n<li>Item 1Item 2Item 3</li>\n<p>Normal text here.</p>\n"
+        );
+    }
+
+    #[test]
+    fn test_generate_html_bold_in_paragraph() {
+        let tokens = VecDeque::from(vec![Token::Paragraph(vec![
+            Token::Text("this is ".to_string()),
+            Token::Bold("bold".to_string()),
+            Token::Text(" text".to_string()),
+        ])]);
+        let html = generate_html(tokens);
+        assert_eq!(html, "<p>this is <strong>bold</strong> text</p>\n");
+    }
+
+    #[test]
+    fn test_generate_html_inline_code_in_paragraph() {
+        let tokens = VecDeque::from(vec![Token::Paragraph(vec![
+            Token::Text("this is ".to_string()),
+            Token::InlineCode("code".to_string()),
+            Token::Text(" text".to_string()),
+        ])]);
+        let html = generate_html(tokens);
+        assert_eq!(html, "<p>this is <code>code</code> text</p>\n");
+    }
+
+    #[test]
+    fn test_generate_html_table() {
+        let tokens = VecDeque::from(vec![Token::Table {
+            headers: vec!["A".to_string(), "B".to_string()],
+            rows: vec![vec!["1".to_string(), "2".to_string()]],
+        }]);
+        let html = generate_html(tokens);
+        assert_eq!(
+            html,
+            "<table>\n<thead>\n<tr>\n<th>A</th>\n<th>B</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>2</td>\n</tr>\n</tbody>\n</table>\n"
         );
     }
 
@@ -265,7 +341,7 @@ mod tests {
         let html = generate_html(tokens);
         assert_eq!(
             html,
-            "<p>Normal text with link\n<a href=\"https://example.com\">Link</a></p>\n"
+            "<p>Normal text with link<a href=\"https://example.com\">Link</a></p>\n"
         );
     }
 }
