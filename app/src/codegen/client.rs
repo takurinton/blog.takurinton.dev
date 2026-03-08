@@ -150,10 +150,7 @@ mod tests {
 
     #[test]
     fn test_generate_sets_attribute() {
-        let tokens = vec![
-            make_open("div", vec![("class", "foo")]),
-            make_close("div"),
-        ];
+        let tokens = vec![make_open("div", vec![("class", "foo")]), make_close("div")];
         let output = generate(tokens).to_string();
         assert!(output.contains("set_attribute"));
         assert!(output.contains("\"class\""));

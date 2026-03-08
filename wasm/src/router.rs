@@ -33,12 +33,13 @@ impl Router {
             };
 
             // Walk up to find <a> element
-            let anchor: Option<HtmlAnchorElement> = target.dyn_ref::<HtmlAnchorElement>().cloned().or_else(|| {
-                target
-                    .dyn_ref::<Element>()
-                    .and_then(|el| el.closest("a").ok().flatten())
-                    .and_then(|el| el.dyn_into::<HtmlAnchorElement>().ok())
-            });
+            let anchor: Option<HtmlAnchorElement> =
+                target.dyn_ref::<HtmlAnchorElement>().cloned().or_else(|| {
+                    target
+                        .dyn_ref::<Element>()
+                        .and_then(|el| el.closest("a").ok().flatten())
+                        .and_then(|el| el.dyn_into::<HtmlAnchorElement>().ok())
+                });
 
             let anchor = match anchor {
                 Some(a) => a,

@@ -23,7 +23,10 @@ pub fn render(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn component(_attr: proc_macro::TokenStream, item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+pub fn component(
+    _attr: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
     let func = parse_macro_input!(item as syn::ItemFn);
     component::transform(func).into()
 }
