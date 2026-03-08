@@ -159,24 +159,11 @@ impl<'a> Lexer<'a> {
     }
 
     fn read_list(&mut self) -> Token {
+        // '* ' or '- ' の2文字をスキップ
         self.read_char();
         self.read_char();
-        let mut tokens = vec![];
 
-        // - [link](https://example.com) であれば ListItem(Token::Link) になる
-        if self.ch == Some('[') {
-            tokens.push(self.read_link());
-        } else {
-            let start = self.position;
-            while let Some(ch) = self.ch {
-                if ch == '\n' {
-                    break;
-                }
-                self.read_char();
-            }
-            tokens.push(Token::Text(self.input[start..self.position].to_string()));
-        }
-
+        let tokens = self.read_inline_until_eol();
         Token::ListItem(tokens)
     }
 

@@ -294,4 +294,44 @@ Normal text here.
             _ => panic!("Unexpected token"),
         }
     }
+
+    #[test]
+    fn test_list_with_bold() {
+        let input = "- **bold** text\n";
+        let tokens = tokenize(input);
+        assert_eq!(tokens.len(), 1);
+        match tokens.get(0).unwrap() {
+            Token::Paragraph(content) | Token::ListItem(content) => {
+                assert!(content.iter().any(|t| matches!(t, Token::Bold(_))));
+            }
+            _ => panic!("Unexpected token: {:?}", tokens.get(0)),
+        }
+    }
+
+    #[test]
+    fn test_list_with_inline_code() {
+        let input = "- `code` text\n";
+        let tokens = tokenize(input);
+        assert_eq!(tokens.len(), 1);
+        match tokens.get(0).unwrap() {
+            Token::Paragraph(content) | Token::ListItem(content) => {
+                assert!(content.iter().any(|t| matches!(t, Token::InlineCode(_))));
+            }
+            _ => panic!("Unexpected token: {:?}", tokens.get(0)),
+        }
+    }
+
+    #[test]
+    fn test_list_with_bold_and_code() {
+        let input = "- **bold** and `code` text\n";
+        let tokens = tokenize(input);
+        assert_eq!(tokens.len(), 1);
+        match tokens.get(0).unwrap() {
+            Token::ListItem(content) => {
+                assert!(content.iter().any(|t| matches!(t, Token::Bold(_))));
+                assert!(content.iter().any(|t| matches!(t, Token::InlineCode(_))));
+            }
+            _ => panic!("Unexpected token: {:?}", tokens.get(0)),
+        }
+    }
 }
