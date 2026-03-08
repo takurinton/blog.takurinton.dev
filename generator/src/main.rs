@@ -11,7 +11,7 @@ trait Generator {
     fn generate_styles(&self);
     fn generate_scripts(&self);
     fn posts_template(&self, content: String) -> String;
-    fn post_template(&self, content: String, title: String, created_at: String) -> String;
+    fn post_template(&self, content: String, title: String, created_at: String, raw_markdown: String) -> String;
     fn generate_posts(&self, md_files: Vec<String>);
     fn generate_post(&self, md_files: Vec<String>);
     fn generate_rss(&self, md_files: Vec<String>);
@@ -141,7 +141,7 @@ impl Generator for HtmlGenerator {
         .to_string()
     }
 
-    fn post_template(&self, content: String, title: String, created_at: String) -> String {
+    fn post_template(&self, content: String, title: String, created_at: String, raw_markdown: String) -> String {
         render! {
         <html lang="en">
             <head>
@@ -179,9 +179,11 @@ impl Generator for HtmlGenerator {
                 <div class="content">
                     <h1 class="title">{title}</h1>
                     <p class="date">{created_at}</p>
-                    {content}
+                    <div class="post-body">{content}</div>
                 </div>
+                <div id="raw-markdown" style="display:none">{raw_markdown}</div>
                 <script type="module" src="/scripts/index.js"></script>
+                <script type="module" src="/scripts/wasm-hydrate.js"></script>
             </body>
         </html>
     }.to_string()
@@ -290,7 +292,8 @@ impl Generator for HtmlGenerator {
 
             let md = markdown::remove_frontmatter(&md);
             let html = markdown_to_html(&md);
-            let html = self.post_template(html, title, created_at);
+            let escaped_md = html_escape(&md);
+            let html = self.post_template(html, title, created_at, escaped_md);
 
             let pathname = md_file.replace(".md", "");
             let path = Path::new(format!("./dist/post/{}", pathname).as_str()).join("index.html");
@@ -399,6 +402,12 @@ impl Generator for HtmlGenerator {
         self.generate_post(md_files.clone());
         self.generate_rss(md_files.clone());
     }
+}
+
+fn html_escape(s: &str) -> String {
+    s.replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
 }
 
 fn truncate_to_char_boundary(s: &str, max_chars: usize) -> String {
