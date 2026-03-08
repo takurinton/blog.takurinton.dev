@@ -4,5 +4,6 @@ members = [
     "markdown",
     "generator",
     "app",
-    "wasm"
+    "wasm",
+    "site"
 ]
