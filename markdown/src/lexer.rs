@@ -59,7 +59,13 @@ impl<'a> Lexer<'a> {
                     Some(self.read_paragraph())
                 }
             }
-            Some('`') => Some(self.read_code_block_or_inline_code()),
+            Some('`') => {
+                if self.peek_char() == Some('`') {
+                    Some(self.read_code_block_or_inline_code())
+                } else {
+                    Some(self.read_paragraph())
+                }
+            }
             Some('>') => Some(self.read_quote()),
             Some('!') => {
                 if self.peek_char() == Some('[') {

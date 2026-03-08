@@ -17,6 +17,10 @@ fn generate_inline_html(tokens: VecDeque<Token>) -> String {
                 output.push_str(&format!("<a href=\"{}\">{}</a>", url, text));
             }
             Token::InlineCode(content) => {
+                let content = content
+                    .replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;");
                 output.push_str(&format!("<code>{}</code>", content));
             }
             Token::Image { src, alt } => {
@@ -72,6 +76,10 @@ pub fn generate_html(tokens: VecDeque<Token>) -> String {
                 ));
             }
             Token::InlineCode(content) => {
+                let content = content
+                    .replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;");
                 output.push_str(&format!("<code>{}</code>\n", content));
             }
             Token::BlockQuote(content) => {
@@ -206,9 +214,11 @@ mod tests {
 
     #[test]
     fn test_generate_html_inline_code() {
-        let tokens = VecDeque::from(vec![Token::InlineCode("let x = 42;".to_string())]);
+        let tokens = VecDeque::from(vec![Token::Paragraph(vec![Token::InlineCode(
+            "let x = 42;".to_string(),
+        )])]);
         let html = generate_html(tokens);
-        assert_eq!(html, "<code>let x = 42;</code>\n");
+        assert_eq!(html, "<p><code>let x = 42;</code></p>\n");
     }
 
     #[test]
