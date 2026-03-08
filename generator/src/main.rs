@@ -11,7 +11,13 @@ trait Generator {
     fn generate_styles(&self);
     fn generate_scripts(&self);
     fn posts_template(&self, content: String) -> String;
-    fn post_template(&self, content: String, title: String, created_at: String) -> String;
+    fn post_template(
+        &self,
+        content: String,
+        title: String,
+        description: String,
+        created_at: String,
+    ) -> String;
     fn generate_posts(&self, md_files: Vec<String>);
     fn generate_post(&self, md_files: Vec<String>);
     fn generate_rss(&self, md_files: Vec<String>);
@@ -146,7 +152,13 @@ impl Generator for HtmlGenerator {
         .to_string()
     }
 
-    fn post_template(&self, content: String, title: String, created_at: String) -> String {
+    fn post_template(
+        &self,
+        content: String,
+        title: String,
+        description: String,
+        created_at: String,
+    ) -> String {
         render! {
         <html lang="en">
             <head>
@@ -163,11 +175,12 @@ impl Generator for HtmlGenerator {
                 <link rel="stylesheet" href="/styles/index.post.css"></link>
                 <meta name="twitter:card" content="summary"></meta>
                 <meta property="og:title" content={title.clone()}></meta>
+                <meta property="og:description" content={description.clone()}></meta>
                 <meta property="og:url" content="https://blog.takurinton.dev/"></meta>
                 <meta property="og:image" content="https://takurinton.dev/me.jpeg"></meta>
                 <meta property="twitter:url" content="https://blog.takurinton.dev/"></meta>
                 <meta property="twitter:image" content="https://takurinton.dev/me.jpeg"></meta>
-                <meta name="description" content="takurinton blog"></meta>
+                <meta name="description" content={description.clone()}></meta>
 
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"></link>
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
@@ -287,6 +300,10 @@ impl Generator for HtmlGenerator {
                     continue;
                 }
             };
+            let description = match frontmatter.get("description") {
+                Some(description) => description.to_string(),
+                None => String::new(),
+            };
             let created_at = match frontmatter.get("created_at") {
                 Some(created_at) => created_at.to_string(),
                 None => {
@@ -297,7 +314,7 @@ impl Generator for HtmlGenerator {
 
             let md = markdown::remove_frontmatter(&md);
             let html = markdown_to_html(&md);
-            let html = self.post_template(html, title, created_at);
+            let html = self.post_template(html, title, description, created_at);
 
             let pathname = md_file.replace(".md", "");
             let path = Path::new(format!("./dist/post/{}", pathname).as_str()).join("index.html");
