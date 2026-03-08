@@ -11,7 +11,13 @@ trait Generator {
     fn generate_styles(&self);
     fn generate_scripts(&self);
     fn posts_template(&self, content: String) -> String;
-    fn post_template(&self, content: String, title: String, created_at: String, raw_markdown: String) -> String;
+    fn post_template(
+        &self,
+        content: String,
+        title: String,
+        created_at: String,
+        raw_markdown: String,
+    ) -> String;
     fn generate_posts(&self, md_files: Vec<String>);
     fn generate_post(&self, md_files: Vec<String>);
     fn generate_rss(&self, md_files: Vec<String>);
@@ -141,7 +147,13 @@ impl Generator for HtmlGenerator {
         .to_string()
     }
 
-    fn post_template(&self, content: String, title: String, created_at: String, raw_markdown: String) -> String {
+    fn post_template(
+        &self,
+        content: String,
+        title: String,
+        created_at: String,
+        raw_markdown: String,
+    ) -> String {
         render! {
         <html lang="en">
             <head>
