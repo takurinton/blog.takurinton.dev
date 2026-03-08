@@ -124,6 +124,35 @@ fn load_page(href: &str) {
             doc.set_title(&new_title.text_content().unwrap_or_default());
         }
 
+        // Update stylesheets: sync <link rel="stylesheet"> from new page's <head>
+        if let Some(new_head) = new_doc.query_selector("head").unwrap() {
+            let head = doc.head().unwrap();
+
+            // Remove existing page-specific stylesheets
+            let existing = head.query_selector_all("link[rel='stylesheet']").unwrap();
+            for i in 0..existing.length() {
+                if let Some(node) = existing.get(i) {
+                    let _ = head.remove_child(&node);
+                }
+            }
+
+            // Add stylesheets from new page
+            let new_links = new_head
+                .query_selector_all("link[rel='stylesheet']")
+                .unwrap();
+            for i in 0..new_links.length() {
+                if let Some(node) = new_links.get(i) {
+                    let link = doc.create_element("link").unwrap();
+                    let el: &Element = node.dyn_ref::<Element>().unwrap();
+                    if let Some(href) = el.get_attribute("href") {
+                        link.set_attribute("rel", "stylesheet").unwrap();
+                        link.set_attribute("href", &href).unwrap();
+                        head.append_child(&link).unwrap();
+                    }
+                }
+            }
+        }
+
         // Re-run highlight.js if available
         let _ = js_sys::eval("if(typeof hljs !== 'undefined') hljs.highlightAll()");
     });
