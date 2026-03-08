@@ -83,6 +83,8 @@ impl<'a> Lexer<'a> {
                 }
             }
 
+            Some('|') => Some(self.read_table()),
+
             // ここから下はカスタムのシンタックス
             Some('@') => {
                 // @og[URL] の形式かどうかを確認
@@ -395,7 +397,99 @@ impl<'a> Lexer<'a> {
         Token::BlockQuote(parts)
     }
 
-    // fn read_ordered_list(&mut self) -> Token {}
+    fn read_table_row(&mut self) -> Vec<String> {
+        let mut cells = Vec::new();
+
+        // 先頭の '|' をスキップ
+        self.read_char();
+
+        loop {
+            // セル内容の前後の空白をスキップしつつ読む
+            let start = self.position;
+            while let Some(ch) = self.ch {
+                if ch == '|' || ch == '\n' {
+                    break;
+                }
+                self.read_char();
+            }
+            cells.push(self.input[start..self.position].trim().to_string());
+
+            match self.ch {
+                Some('|') => {
+                    // 次が '\n' か EOF なら行末の '|' なので終了
+                    if self.peek_char() == Some('\n') || self.peek_char().is_none() {
+                        self.read_char(); // '|'
+                        break;
+                    }
+                    self.read_char(); // '|' をスキップして次のセルへ
+                }
+                _ => break, // '\n' or EOF
+            }
+        }
+
+        cells
+    }
+
+    fn is_separator_row(cells: &[String]) -> bool {
+        cells.iter().all(|c| {
+            let trimmed = c.trim();
+            !trimmed.is_empty()
+                && trimmed.chars().all(|ch| ch == '-' || ch == ':')
+                && trimmed.contains('-')
+        })
+    }
+
+    fn read_table(&mut self) -> Token {
+        // ヘッダー行を読む
+        let headers = self.read_table_row();
+
+        // 改行をスキップ
+        if self.ch == Some('\n') {
+            self.read_char();
+        }
+
+        // 空白スキップ（行頭のスペースなど）
+        // ※ skip_whitespace は改行もスキップするので使わない
+        while self.ch == Some(' ') || self.ch == Some('\t') {
+            self.read_char();
+        }
+
+        // セパレータ行（| --- | --- |）
+        if self.ch != Some('|') {
+            // テーブルではなかった → Paragraph にフォールバック
+            let text = format!("| {} |", headers.join(" | "));
+            return Token::Paragraph(vec![Token::Text(text)]);
+        }
+
+        let separator = self.read_table_row();
+        if !Self::is_separator_row(&separator) {
+            let text = format!("| {} |", headers.join(" | "));
+            return Token::Paragraph(vec![Token::Text(text)]);
+        }
+
+        // データ行を読む
+        let mut rows = Vec::new();
+        loop {
+            // 改行をスキップ
+            if self.ch == Some('\n') {
+                self.read_char();
+            }
+
+            // 空白スキップ
+            while self.ch == Some(' ') || self.ch == Some('\t') {
+                self.read_char();
+            }
+
+            if self.ch != Some('|') {
+                break;
+            }
+
+            let row = self.read_table_row();
+            rows.push(row);
+        }
+
+        Token::Table { headers, rows }
+    }
 
     fn read_link_card(&mut self) -> Token {
         let content = self.input[self.position..].to_string();

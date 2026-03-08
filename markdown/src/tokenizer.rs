@@ -231,4 +231,67 @@ Normal text here.
         let tokens = tokenize(input);
         assert_eq!(tokens.len(), 7);
     }
+
+    #[test]
+    fn test_bold_in_paragraph() {
+        let input = "this is **bold** text";
+        let tokens = tokenize(input);
+        assert_eq!(tokens.len(), 1);
+        match tokens.get(0).unwrap() {
+            Token::Paragraph(content) => {
+                assert_eq!(content.len(), 3);
+                assert_eq!(content[0], Token::Text("this is ".to_string()));
+                assert_eq!(content[1], Token::Bold("bold".to_string()));
+                assert_eq!(content[2], Token::Text(" text".to_string()));
+            }
+            _ => panic!("Unexpected token"),
+        }
+    }
+
+    #[test]
+    fn test_inline_code_in_paragraph() {
+        let input = "this is `code` text";
+        let tokens = tokenize(input);
+        assert_eq!(tokens.len(), 1);
+        match tokens.get(0).unwrap() {
+            Token::Paragraph(content) => {
+                assert_eq!(content.len(), 3);
+                assert_eq!(content[0], Token::Text("this is ".to_string()));
+                assert_eq!(content[1], Token::InlineCode("code".to_string()));
+                assert_eq!(content[2], Token::Text(" text".to_string()));
+            }
+            _ => panic!("Unexpected token"),
+        }
+    }
+
+    #[test]
+    fn test_table() {
+        let input = "| A | B |\n| --- | --- |\n| 1 | 2 |\n";
+        let tokens = tokenize(input);
+        assert_eq!(tokens.len(), 1);
+        match tokens.get(0).unwrap() {
+            Token::Table { headers, rows } => {
+                assert_eq!(headers, &vec!["A".to_string(), "B".to_string()]);
+                assert_eq!(rows.len(), 1);
+                assert_eq!(rows[0], vec!["1".to_string(), "2".to_string()]);
+            }
+            _ => panic!("Unexpected token: {:?}", tokens.get(0)),
+        }
+    }
+
+    #[test]
+    fn test_table_multiple_rows() {
+        let input = "| Name | Age |\n| --- | --- |\n| Alice | 30 |\n| Bob | 25 |\n";
+        let tokens = tokenize(input);
+        assert_eq!(tokens.len(), 1);
+        match tokens.get(0).unwrap() {
+            Token::Table { headers, rows } => {
+                assert_eq!(headers, &vec!["Name".to_string(), "Age".to_string()]);
+                assert_eq!(rows.len(), 2);
+                assert_eq!(rows[0], vec!["Alice".to_string(), "30".to_string()]);
+                assert_eq!(rows[1], vec!["Bob".to_string(), "25".to_string()]);
+            }
+            _ => panic!("Unexpected token"),
+        }
+    }
 }
