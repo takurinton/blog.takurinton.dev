@@ -206,9 +206,11 @@ mod tests {
 
     #[test]
     fn test_generate_html_inline_code() {
-        let tokens = VecDeque::from(vec![Token::InlineCode("let x = 42;".to_string())]);
+        let tokens = VecDeque::from(vec![Token::Paragraph(vec![Token::InlineCode(
+            "let x = 42;".to_string(),
+        )])]);
         let html = generate_html(tokens);
-        assert_eq!(html, "<code>let x = 42;</code>\n");
+        assert_eq!(html, "<p><code>let x = 42;</code></p>\n");
     }
 
     #[test]

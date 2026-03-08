@@ -151,10 +151,11 @@ mod tests {
         let tokens = tokenize(input);
         assert_eq!(tokens.len(), 1);
         match tokens.get(0).unwrap() {
-            Token::InlineCode(content) => {
-                assert_eq!(content, "let x = 42;");
+            Token::Paragraph(content) => {
+                assert_eq!(content.len(), 1);
+                assert_eq!(content[0], Token::InlineCode("let x = 42;".to_string()));
             }
-            _ => panic!("Unexpected token"),
+            _ => panic!("Unexpected token: {:?}", tokens.get(0).unwrap()),
         }
     }
 
