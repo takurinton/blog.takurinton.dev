@@ -1,0 +1,38 @@
+name: preview
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  Preview-Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: add wasm32 target
+        run: rustup target add wasm32-unknown-unknown
+      - name: install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - name: install vercel cli
+        run: npm install --global vercel@latest
+      - name: build ssg
+        run: cargo run -p generator
+      - name: build wasm
+        run: wasm-pack build wasm/ --target web --out-dir ../dist/scripts/pkg/
+      - name: deploy preview
+        id: deploy
+        run: |
+          url=$(vercel deploy --token ${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: comment preview url
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 Preview deploy: ${{ steps.deploy.outputs.url }}`
+            })
