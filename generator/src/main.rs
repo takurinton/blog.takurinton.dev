@@ -135,6 +135,7 @@ impl Generator for HtmlGenerator {
                     {content}
                 </section>
                 <script type="module" src="/scripts/index.js"></script>
+                <script type="module" src="/scripts/wasm-boot.js"></script>
             </body>
         </html>
               }
@@ -182,6 +183,7 @@ impl Generator for HtmlGenerator {
                     {content}
                 </div>
                 <script type="module" src="/scripts/index.js"></script>
+                <script type="module" src="/scripts/wasm-boot.js"></script>
             </body>
         </html>
     }.to_string()

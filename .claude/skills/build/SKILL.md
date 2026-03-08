@@ -10,8 +10,14 @@ description: ブログをビルドして dist/ に HTML を生成する
 ## 実行コマンド
 
 ```bash
-cargo run
+# 1. SSG ビルド
+cargo run -p generator
+
+# 2. WASM ビルド（SPA ルーター用）
+wasm-pack build wasm/ --target web --out-dir ../dist/scripts/pkg/
 ```
+
+`cargo run` でも動作する（generator がデフォルトバイナリ）。
 
 ## 生成物
 
@@ -20,13 +26,16 @@ cargo run
 - `dist/rss.xml` - RSSフィード
 - `dist/styles/` - コピーされたCSS
 - `dist/scripts/` - コピーされたJS
+- `dist/scripts/pkg/` - WASM バイナリ + JS グルーコード（wasm-pack で生成）
 
 ## ビルドの流れ
 
 1. `generator` クレートが `posts/*.md` を読み込む
 2. `markdown` クレートでフロントマターをパース、本文をHTMLに変換
-3. `app` クレートの `render!` proc-macroでHTMLテンプレートを生成
+3. `app` クレートの `render!` proc-macro で HTML テンプレートを生成（SSR パス）
 4. `dist/` に書き出す
+5. `wasm-pack` で `wasm/` クレートを WASM にコンパイル → `dist/scripts/pkg/` に出力
+6. ブラウザで `wasm-boot.js` が WASM をロードし SPA ルーターを起動
 
 ## エラー時の対処
 
@@ -44,4 +53,4 @@ GitHub Actions の `test.yaml` では以下が自動実行される：
 - `cargo fmt --check`
 - `cargo test`
 
-デプロイは `deploy.yaml` で `cargo run` → Vercel へのデプロイ。
+デプロイは `deploy.yaml` で `cargo run -p generator` → `wasm-pack build` → Vercel へのデプロイ。
