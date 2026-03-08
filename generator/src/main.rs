@@ -115,6 +115,8 @@ impl Generator for HtmlGenerator {
                 ></link>
                 <link rel="stylesheet" href="/styles/root.css"></link>
                 <link rel="stylesheet" href="/styles/index.home.css"></link>
+                <link rel="stylesheet" href="/styles/index.post.css"></link>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"></link>
                 <meta name="twitter:card" content="summary"></meta>
                 <meta property="og:url" content="https://blog.takurinton.dev/"></meta>
                 <meta property="og:image" content="https://takurinton.dev/me.jpeg"></meta>
@@ -155,6 +157,7 @@ impl Generator for HtmlGenerator {
                     // type="image/x-icon"
                 ></link>
                 <link rel="stylesheet" href="/styles/root.css"></link>
+                <link rel="stylesheet" href="/styles/index.home.css"></link>
                 <link rel="stylesheet" href="/styles/index.post.css"></link>
                 <meta name="twitter:card" content="summary"></meta>
                 <meta property="og:title" content={title.clone()}></meta>
