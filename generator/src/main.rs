@@ -115,12 +115,16 @@ impl Generator for HtmlGenerator {
                 ></link>
                 <link rel="stylesheet" href="/styles/root.css"></link>
                 <link rel="stylesheet" href="/styles/index.home.css"></link>
+                <link rel="stylesheet" href="/styles/index.post.css"></link>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"></link>
                 <meta name="twitter:card" content="summary"></meta>
                 <meta property="og:url" content="https://blog.takurinton.dev/"></meta>
                 <meta property="og:image" content="https://takurinton.dev/me.jpeg"></meta>
                 <meta property="twitter:url" content="https://blog.takurinton.dev/"></meta>
                 <meta property="twitter:image" content="https://takurinton.dev/me.jpeg"></meta>
                 <meta name="description" content="takurinton blog"></meta>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
             </head>
             <body>
                 <header class="header">
@@ -135,6 +139,7 @@ impl Generator for HtmlGenerator {
                     {content}
                 </section>
                 <script type="module" src="/scripts/index.js"></script>
+                <script type="module" src="/scripts/wasm-boot.js"></script>
             </body>
         </html>
               }
@@ -154,6 +159,7 @@ impl Generator for HtmlGenerator {
                     // type="image/x-icon"
                 ></link>
                 <link rel="stylesheet" href="/styles/root.css"></link>
+                <link rel="stylesheet" href="/styles/index.home.css"></link>
                 <link rel="stylesheet" href="/styles/index.post.css"></link>
                 <meta name="twitter:card" content="summary"></meta>
                 <meta property="og:title" content={title.clone()}></meta>
@@ -182,6 +188,7 @@ impl Generator for HtmlGenerator {
                     {content}
                 </div>
                 <script type="module" src="/scripts/index.js"></script>
+                <script type="module" src="/scripts/wasm-boot.js"></script>
             </body>
         </html>
     }.to_string()
