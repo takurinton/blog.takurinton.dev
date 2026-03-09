@@ -1,11 +1,13 @@
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{Document, Element, Event, HtmlAnchorElement, Window};
+use web_sys::{Document, Element, Event, HtmlAnchorElement};
 
+use crate::cache::PageCache;
 use crate::signal::Signal;
 
 pub struct Router {
     route: Signal<String>,
+    cache: Option<PageCache>,
 }
 
 impl Router {
@@ -16,7 +18,13 @@ impl Router {
 
         Router {
             route: Signal::new(pathname),
+            cache: None,
         }
+    }
+
+    pub fn with_cache(mut self, cache: PageCache) -> Self {
+        self.cache = Some(cache);
+        self
     }
 
     pub fn boot(&self, doc: &Document) {
@@ -26,6 +34,7 @@ impl Router {
 
     fn setup_click_intercept(&self, doc: &Document) {
         let route = self.route.clone();
+        let cache = self.cache.clone();
         let closure = Closure::<dyn Fn(Event)>::new(move |e: Event| {
             let target = match e.target() {
                 Some(t) => t,
@@ -51,7 +60,7 @@ impl Router {
             // Only intercept internal links
             if href.starts_with('/') {
                 e.prevent_default();
-                navigate(&route, &href);
+                navigate(&route, &href, cache.clone());
             }
         });
 
@@ -62,12 +71,13 @@ impl Router {
 
     fn setup_popstate(&self) {
         let route = self.route.clone();
+        let cache = self.cache.clone();
         let window = web_sys::window().unwrap();
         let closure = Closure::<dyn Fn(Event)>::new(move |_: Event| {
             let location = web_sys::window().unwrap().location();
             let pathname = location.pathname().unwrap_or_else(|_| "/".to_string());
             route.set(pathname.clone());
-            load_page(&pathname);
+            load_page(&pathname, cache.clone());
         });
 
         window
@@ -77,21 +87,29 @@ impl Router {
     }
 }
 
-fn navigate(route: &Signal<String>, href: &str) {
+fn navigate(route: &Signal<String>, href: &str, cache: Option<PageCache>) {
     let window = web_sys::window().unwrap();
     let history = window.history().unwrap();
     history
         .push_state_with_url(&JsValue::NULL, "", Some(href))
         .unwrap();
     route.set(href.to_string());
-    load_page(href);
+    load_page(href, cache);
 }
 
-fn load_page(href: &str) {
+fn load_page(href: &str, cache: Option<PageCache>) {
     let window = web_sys::window().unwrap();
     let href = href.to_string();
 
     wasm_bindgen_futures::spawn_local(async move {
+        // キャッシュがあればそれを使う
+        if let Some(ref cache) = cache {
+            if let Some(html) = cache.get(&href) {
+                apply_html(&html);
+                return;
+            }
+        }
+
         let resp = match wasm_bindgen_futures::JsFuture::from(window.fetch_with_str(&href)).await {
             Ok(r) => r,
             Err(_) => return,
@@ -105,26 +123,33 @@ fn load_page(href: &str) {
 
         let html = text.as_string().unwrap_or_default();
 
-        let doc = web_sys::window().unwrap().document().unwrap();
-
-        // Parse the fetched HTML and replace <body> content
-        let parser = web_sys::DomParser::new().unwrap();
-        let new_doc = parser
-            .parse_from_string(&html, web_sys::SupportedType::TextHtml)
-            .unwrap();
-
-        if let Some(new_body) = new_doc.body() {
-            if let Some(body) = doc.body() {
-                body.set_inner_html(&new_body.inner_html());
-            }
+        // fetchしたらキャッシュに保存
+        if let Some(ref cache) = cache {
+            cache.set(&href, html.clone());
         }
 
-        // Update title
-        if let Some(new_title) = new_doc.query_selector("title").unwrap() {
-            doc.set_title(&new_title.text_content().unwrap_or_default());
-        }
-
-        // Re-run highlight.js (loaded globally on all pages)
-        let _ = js_sys::eval("if(typeof hljs !== 'undefined') hljs.highlightAll()");
+        apply_html(&html);
     });
+}
+
+fn apply_html(html: &str) {
+    let doc = web_sys::window().unwrap().document().unwrap();
+
+    let parser = web_sys::DomParser::new().unwrap();
+    let new_doc = parser
+        .parse_from_string(html, web_sys::SupportedType::TextHtml)
+        .unwrap();
+
+    if let Some(new_body) = new_doc.body() {
+        if let Some(body) = doc.body() {
+            body.set_inner_html(&new_body.inner_html());
+        }
+    }
+
+    if let Some(new_title) = new_doc.query_selector("title").unwrap() {
+        doc.set_title(&new_title.text_content().unwrap_or_default());
+    }
+
+    // Re-run highlight.js (loaded globally on all pages)
+    let _ = js_sys::eval("if(typeof hljs !== 'undefined') hljs.highlightAll()");
 }
