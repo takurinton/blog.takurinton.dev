@@ -30,6 +30,9 @@ impl Router {
     pub fn boot(&self, doc: &Document) {
         self.setup_click_intercept(doc);
         self.setup_popstate();
+        if self.cache.is_some() {
+            self.setup_hover_prefetch(doc);
+        }
     }
 
     fn setup_click_intercept(&self, doc: &Document) {
@@ -41,7 +44,6 @@ impl Router {
                 None => return,
             };
 
-            // Walk up to find <a> element
             let anchor: Option<HtmlAnchorElement> =
                 target.dyn_ref::<HtmlAnchorElement>().cloned().or_else(|| {
                     target
@@ -57,7 +59,6 @@ impl Router {
 
             let href = anchor.get_attribute("href").unwrap_or_default();
 
-            // Only intercept internal links
             if href.starts_with('/') {
                 e.prevent_default();
                 navigate(&route, &href, cache.clone());
@@ -65,6 +66,50 @@ impl Router {
         });
 
         doc.add_event_listener_with_callback("click", closure.as_ref().unchecked_ref())
+            .unwrap();
+        closure.forget();
+    }
+
+    fn setup_hover_prefetch(&self, doc: &Document) {
+        let cache = self.cache.clone();
+        let closure = Closure::<dyn Fn(Event)>::new(move |e: Event| {
+            let target = match e.target() {
+                Some(t) => t,
+                None => return,
+            };
+
+            let anchor: Option<HtmlAnchorElement> =
+                target.dyn_ref::<HtmlAnchorElement>().cloned().or_else(|| {
+                    target
+                        .dyn_ref::<Element>()
+                        .and_then(|el| el.closest("a").ok().flatten())
+                        .and_then(|el| el.dyn_into::<HtmlAnchorElement>().ok())
+                });
+
+            let anchor = match anchor {
+                Some(a) => a,
+                None => return,
+            };
+
+            let href = anchor.get_attribute("href").unwrap_or_default();
+            if !href.starts_with('/') {
+                return;
+            }
+
+            let cache = match cache.clone() {
+                Some(c) => c,
+                None => return,
+            };
+
+            // すでにキャッシュ済みなら何もしない
+            if cache.get(&href).is_some() {
+                return;
+            }
+
+            prefetch_page(&href, cache);
+        });
+
+        doc.add_event_listener_with_callback("mouseover", closure.as_ref().unchecked_ref())
             .unwrap();
         closure.forget();
     }
@@ -98,7 +143,6 @@ fn navigate(route: &Signal<String>, href: &str, cache: Option<PageCache>) {
 }
 
 fn load_page(href: &str, cache: Option<PageCache>) {
-    let window = web_sys::window().unwrap();
     let href = href.to_string();
 
     wasm_bindgen_futures::spawn_local(async move {
@@ -110,26 +154,38 @@ fn load_page(href: &str, cache: Option<PageCache>) {
             }
         }
 
-        let resp = match wasm_bindgen_futures::JsFuture::from(window.fetch_with_str(&href)).await {
-            Ok(r) => r,
-            Err(_) => return,
-        };
-
-        let resp: web_sys::Response = resp.dyn_into().unwrap();
-        let text = match wasm_bindgen_futures::JsFuture::from(resp.text().unwrap()).await {
-            Ok(t) => t,
-            Err(_) => return,
-        };
-
-        let html = text.as_string().unwrap_or_default();
-
-        // fetchしたらキャッシュに保存
-        if let Some(ref cache) = cache {
-            cache.set(&href, html.clone());
+        if let Some(html) = fetch_html(&href).await {
+            if let Some(ref cache) = cache {
+                cache.set(&href, html.clone());
+            }
+            apply_html(&html);
         }
-
-        apply_html(&html);
     });
+}
+
+// ホバー時のバックグラウンドprefetch。DOMは更新しない。
+fn prefetch_page(href: &str, cache: PageCache) {
+    let href = href.to_string();
+
+    wasm_bindgen_futures::spawn_local(async move {
+        if let Some(html) = fetch_html(&href).await {
+            cache.set(&href, html);
+        }
+    });
+}
+
+async fn fetch_html(href: &str) -> Option<String> {
+    let window = web_sys::window().unwrap();
+
+    let resp = wasm_bindgen_futures::JsFuture::from(window.fetch_with_str(href))
+        .await
+        .ok()?;
+    let resp: web_sys::Response = resp.dyn_into().ok()?;
+    let text = wasm_bindgen_futures::JsFuture::from(resp.text().ok()?)
+        .await
+        .ok()?;
+
+    text.as_string()
 }
 
 fn apply_html(html: &str) {
@@ -150,6 +206,5 @@ fn apply_html(html: &str) {
         doc.set_title(&new_title.text_content().unwrap_or_default());
     }
 
-    // Re-run highlight.js (loaded globally on all pages)
     let _ = js_sys::eval("if(typeof hljs !== 'undefined') hljs.highlightAll()");
 }
