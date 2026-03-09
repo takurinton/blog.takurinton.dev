@@ -2,12 +2,13 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{Document, Element, Event, HtmlAnchorElement};
 
-use crate::cache::PageCache;
+use crate::cache::{PageCache, ScrollCache};
 use crate::signal::Signal;
 
 pub struct Router {
     route: Signal<String>,
     cache: Option<PageCache>,
+    scroll_cache: Option<ScrollCache>,
 }
 
 impl Router {
@@ -19,11 +20,17 @@ impl Router {
         Router {
             route: Signal::new(pathname),
             cache: None,
+            scroll_cache: None,
         }
     }
 
     pub fn with_cache(mut self, cache: PageCache) -> Self {
         self.cache = Some(cache);
+        self
+    }
+
+    pub fn with_scroll_cache(mut self, scroll_cache: ScrollCache) -> Self {
+        self.scroll_cache = Some(scroll_cache);
         self
     }
 
@@ -38,6 +45,7 @@ impl Router {
     fn setup_click_intercept(&self, doc: &Document) {
         let route = self.route.clone();
         let cache = self.cache.clone();
+        let scroll_cache = self.scroll_cache.clone();
         let closure = Closure::<dyn Fn(Event)>::new(move |e: Event| {
             let target = match e.target() {
                 Some(t) => t,
@@ -61,6 +69,10 @@ impl Router {
 
             if href.starts_with('/') {
                 e.prevent_default();
+                // 遷移前に現在のスクロール位置を保存
+                if let Some(ref sc) = scroll_cache {
+                    save_scroll(sc, &route.get());
+                }
                 navigate(&route, &href, cache.clone());
             }
         });
@@ -117,12 +129,22 @@ impl Router {
     fn setup_popstate(&self) {
         let route = self.route.clone();
         let cache = self.cache.clone();
+        let scroll_cache = self.scroll_cache.clone();
         let window = web_sys::window().unwrap();
         let closure = Closure::<dyn Fn(Event)>::new(move |_: Event| {
             let location = web_sys::window().unwrap().location();
-            let pathname = location.pathname().unwrap_or_else(|_| "/".to_string());
-            route.set(pathname.clone());
-            load_page(&pathname, cache.clone());
+            let new_pathname = location.pathname().unwrap_or_else(|_| "/".to_string());
+
+            // 遷移前に現在のスクロール位置を保存
+            if let Some(ref sc) = scroll_cache {
+                save_scroll(sc, &route.get());
+            }
+
+            // 遷移先の保存済みスクロール位置を取得
+            let scroll_pos = scroll_cache.as_ref().and_then(|sc| sc.get(&new_pathname));
+
+            route.set(new_pathname.clone());
+            load_page(&new_pathname, cache.clone(), scroll_pos);
         });
 
         window
@@ -139,10 +161,11 @@ fn navigate(route: &Signal<String>, href: &str, cache: Option<PageCache>) {
         .push_state_with_url(&JsValue::NULL, "", Some(href))
         .unwrap();
     route.set(href.to_string());
-    load_page(href, cache);
+    // 新規遷移はトップへスクロール
+    load_page(href, cache, None);
 }
 
-fn load_page(href: &str, cache: Option<PageCache>) {
+fn load_page(href: &str, cache: Option<PageCache>, scroll_restore: Option<(f64, f64)>) {
     let href = href.to_string();
 
     wasm_bindgen_futures::spawn_local(async move {
@@ -150,6 +173,7 @@ fn load_page(href: &str, cache: Option<PageCache>) {
         if let Some(ref cache) = cache {
             if let Some(html) = cache.get(&href) {
                 apply_html(&html);
+                restore_scroll(scroll_restore);
                 return;
             }
         }
@@ -159,6 +183,7 @@ fn load_page(href: &str, cache: Option<PageCache>) {
                 cache.set(&href, html.clone());
             }
             apply_html(&html);
+            restore_scroll(scroll_restore);
         }
     });
 }
@@ -207,4 +232,17 @@ fn apply_html(html: &str) {
     }
 
     let _ = js_sys::eval("if(typeof hljs !== 'undefined') hljs.highlightAll()");
+}
+
+fn save_scroll(scroll_cache: &ScrollCache, href: &str) {
+    let window = web_sys::window().unwrap();
+    let x = window.scroll_x().unwrap_or(0.0);
+    let y = window.scroll_y().unwrap_or(0.0);
+    scroll_cache.set(href, (x, y));
+}
+
+fn restore_scroll(pos: Option<(f64, f64)>) {
+    let window = web_sys::window().unwrap();
+    let (x, y) = pos.unwrap_or((0.0, 0.0));
+    window.scroll_to_with_x_and_y(x, y);
 }
