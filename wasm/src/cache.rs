@@ -22,3 +22,24 @@ impl PageCache {
         self.inner.borrow_mut().insert(key.to_string(), value);
     }
 }
+
+#[derive(Clone)]
+pub struct ScrollCache {
+    inner: Rc<RefCell<HashMap<String, (f64, f64)>>>,
+}
+
+impl ScrollCache {
+    pub fn new() -> Self {
+        ScrollCache {
+            inner: Rc::new(RefCell::new(HashMap::new())),
+        }
+    }
+
+    pub fn get(&self, key: &str) -> Option<(f64, f64)> {
+        self.inner.borrow().get(key).copied()
+    }
+
+    pub fn set(&self, key: &str, pos: (f64, f64)) {
+        self.inner.borrow_mut().insert(key.to_string(), pos);
+    }
+}
