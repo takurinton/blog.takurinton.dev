@@ -20,7 +20,7 @@ cargo check                   # コンパイルチェック
 
 # ビルド
 cargo run -p generator        # SSG実行 → dist/ に出力
-wasm-pack build wasm/ --target web --out-dir ../dist/scripts/pkg/  # WASMビルド
+wasm-pack build site/ --target web --out-dir ../dist/scripts/pkg/  # WASMビルド（site crateがエントリポイント）
 ```
 
 ## コーディング
@@ -46,12 +46,27 @@ posts/*.md → generator (SSR) → dist/*.html
 | **markdown** | lib | Markdown→HTML 変換。lexer, tokenizer, generator で処理 |
 | **app** | proc-macro | `render!` マクロ（SSR/Client デュアルモード）と `#[component]` マクロ |
 | **generator** | bin | SSG。`posts/*.md` を読み、`dist/` にHTML・RSS生成 |
-| **wasm** | cdylib | Signal, Bindable, Router によるクライアントサイド SPA |
+| **wasm** | rlib | Signal, Bindable, Router などのクライアントサイドライブラリ。SSG+hydration logicのみ提供 |
+| **site** | cdylib+rlib | アプリケーション層。ページ・コンポーネント定義と WASM エントリポイント |
 
 ### render! マクロのデュアルモード
 
 - **native target**: SSR パス — `String` を組み立てるコード生成（`codegen/ssr.rs`）
 - **wasm32 target**: Client パス — `web_sys` で DOM 要素を生成（`codegen/client.rs`）
+
+### site crate の wasm32 / native 分離
+
+`site` は `generator`（native）と wasm-pack（wasm32）の両方からビルドされる。
+
+- SSR 用モジュール（`components`, `pages`, `routes`）は `#[cfg(not(target_arch = "wasm32"))]` でゲート
+- WASM 用コード（`boot`, `og` など）は `#[cfg(target_arch = "wasm32")]` でゲート
+- wasm32 ターゲットでは `render!` マクロがクライアントパスになり `String` ではなく `JsString` を返すため、SSR モジュールを wasm32 でコンパイルしてはいけない
+
+### wasm crate の責務
+
+- `wasm` は pure library（`rlib`）。`#[wasm_bindgen(start)]` は持たない
+- アプリケーション固有の処理（OGカード、ページ固有の初期化など）は `site` で実装する
+- Router にはライフサイクルフック（`with_on_navigate`）を提供し、アプリ側がコールバックを注入する設計
 
 ### Content
 
@@ -64,3 +79,8 @@ posts/*.md → generator (SSR) → dist/*.html
 - 冗長な説明を避け、端的に答える
 - 作業中に問題が起きた場合のみ報告する
 - 成功した場合は結果だけ伝える
+
+## Memory
+
+- このプロジェクトでは Claude の memory 機能（`~/.claude/projects/.../memory/`）を使わない
+- アーキテクチャの知見や注意点はこの CLAUDE.md に直接書く
