@@ -155,7 +155,12 @@ impl Router {
             let scroll_pos = scroll_cache.as_ref().and_then(|sc| sc.get(&new_pathname));
 
             route.set(new_pathname.clone());
-            load_page(&new_pathname, cache.clone(), scroll_pos, on_navigate.clone());
+            load_page(
+                &new_pathname,
+                cache.clone(),
+                scroll_pos,
+                on_navigate.clone(),
+            );
         });
 
         window
