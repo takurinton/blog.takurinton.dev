@@ -9,6 +9,7 @@ on:
     paths-ignore:
       - "CLAUDE.md"
       - "README.md"
+      - ".claude/**"
 jobs:
   Deploy-Production:
     runs-on: ubuntu-latest
