@@ -20,7 +20,7 @@ cargo check                   # コンパイルチェック
 
 # ビルド
 cargo run -p generator        # SSG実行 → dist/ に出力
-wasm-pack build wasm/ --target web --out-dir ../dist/scripts/pkg/  # WASMビルド
+wasm-pack build site/ --target web --out-dir ../dist/scripts/pkg/  # WASMビルド
 ```
 
 ## コーディング

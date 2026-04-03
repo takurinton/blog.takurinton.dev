@@ -20,7 +20,7 @@ jobs:
       - name: build ssg
         run: cargo run -p generator
       - name: build wasm
-        run: wasm-pack build wasm/ --target web --out-dir ../dist/scripts/pkg/
+        run: wasm-pack build site/ --target web --out-dir ../dist/scripts/pkg/
       - name: deploy preview
         id: deploy
         run: |
