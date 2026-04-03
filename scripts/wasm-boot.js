@@ -1,2 +1,2 @@
-import init from '/scripts/pkg/wasm.js';
+import init from '/scripts/pkg/site.js';
 init();

@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{Document, Element, Event, HtmlAnchorElement};
@@ -9,6 +11,7 @@ pub struct Router {
     route: Signal<String>,
     cache: Option<PageCache>,
     scroll_cache: Option<ScrollCache>,
+    on_navigate: Option<Rc<dyn Fn()>>,
 }
 
 impl Router {
@@ -21,6 +24,7 @@ impl Router {
             route: Signal::new(pathname),
             cache: None,
             scroll_cache: None,
+            on_navigate: None,
         }
     }
 
@@ -31,6 +35,11 @@ impl Router {
 
     pub fn with_scroll_cache(mut self, scroll_cache: ScrollCache) -> Self {
         self.scroll_cache = Some(scroll_cache);
+        self
+    }
+
+    pub fn with_on_navigate<F: Fn() + 'static>(mut self, f: F) -> Self {
+        self.on_navigate = Some(Rc::new(f));
         self
     }
 
@@ -46,6 +55,7 @@ impl Router {
         let route = self.route.clone();
         let cache = self.cache.clone();
         let scroll_cache = self.scroll_cache.clone();
+        let on_navigate = self.on_navigate.clone();
         let closure = Closure::<dyn Fn(Event)>::new(move |e: Event| {
             let target = match e.target() {
                 Some(t) => t,
@@ -73,7 +83,7 @@ impl Router {
                 if let Some(ref sc) = scroll_cache {
                     save_scroll(sc, &route.get());
                 }
-                navigate(&route, &href, cache.clone());
+                navigate(&route, &href, cache.clone(), on_navigate.clone());
             }
         });
 
@@ -130,6 +140,7 @@ impl Router {
         let route = self.route.clone();
         let cache = self.cache.clone();
         let scroll_cache = self.scroll_cache.clone();
+        let on_navigate = self.on_navigate.clone();
         let window = web_sys::window().unwrap();
         let closure = Closure::<dyn Fn(Event)>::new(move |_: Event| {
             let location = web_sys::window().unwrap().location();
@@ -144,7 +155,12 @@ impl Router {
             let scroll_pos = scroll_cache.as_ref().and_then(|sc| sc.get(&new_pathname));
 
             route.set(new_pathname.clone());
-            load_page(&new_pathname, cache.clone(), scroll_pos);
+            load_page(
+                &new_pathname,
+                cache.clone(),
+                scroll_pos,
+                on_navigate.clone(),
+            );
         });
 
         window
@@ -154,7 +170,12 @@ impl Router {
     }
 }
 
-fn navigate(route: &Signal<String>, href: &str, cache: Option<PageCache>) {
+fn navigate(
+    route: &Signal<String>,
+    href: &str,
+    cache: Option<PageCache>,
+    on_navigate: Option<Rc<dyn Fn()>>,
+) {
     let window = web_sys::window().unwrap();
     let history = window.history().unwrap();
     history
@@ -162,10 +183,15 @@ fn navigate(route: &Signal<String>, href: &str, cache: Option<PageCache>) {
         .unwrap();
     route.set(href.to_string());
     // 新規遷移はトップへスクロール
-    load_page(href, cache, None);
+    load_page(href, cache, None, on_navigate);
 }
 
-fn load_page(href: &str, cache: Option<PageCache>, scroll_restore: Option<(f64, f64)>) {
+fn load_page(
+    href: &str,
+    cache: Option<PageCache>,
+    scroll_restore: Option<(f64, f64)>,
+    on_navigate: Option<Rc<dyn Fn()>>,
+) {
     let href = href.to_string();
 
     wasm_bindgen_futures::spawn_local(async move {
@@ -174,6 +200,9 @@ fn load_page(href: &str, cache: Option<PageCache>, scroll_restore: Option<(f64, 
             if let Some(html) = cache.get(&href) {
                 apply_html(&html);
                 restore_scroll(scroll_restore);
+                if let Some(ref f) = on_navigate {
+                    f();
+                }
                 return;
             }
         }
@@ -184,6 +213,9 @@ fn load_page(href: &str, cache: Option<PageCache>, scroll_restore: Option<(f64, 
             }
             apply_html(&html);
             restore_scroll(scroll_restore);
+            if let Some(ref f) = on_navigate {
+                f();
+            }
         }
     });
 }
