@@ -85,7 +85,6 @@ pub fn document(props: DocumentProps) -> String {
             </head>
             <body>
                 {props.body_content}
-                <script type="module" src="/scripts/index.js"></script>
                 <script type="module" src="/scripts/wasm-boot.js"></script>
             </body>
         </html>

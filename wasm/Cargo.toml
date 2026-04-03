@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+crate-type = ["rlib"]
 
 [dependencies]
 wasm-bindgen = "0.2"
@@ -30,5 +30,3 @@ web-sys = { version = "0.3", features = [
     "HtmlHeadElement",
     "NodeList",
 ] }
-markdown = { path = "../markdown" }
-app = { path = "../app" }
