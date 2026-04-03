@@ -6,6 +6,9 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "CLAUDE.md"
+      - "README.md"
 jobs:
   Deploy-Production:
     runs-on: ubuntu-latest

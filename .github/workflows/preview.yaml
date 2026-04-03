@@ -6,6 +6,9 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - "CLAUDE.md"
+      - "README.md"
 jobs:
   Preview-Deploy:
     runs-on: ubuntu-latest
