@@ -4,6 +4,8 @@ pub mod components;
 pub mod pages;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod routes;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod style;
 
 #[cfg(target_arch = "wasm32")]
 mod og;
