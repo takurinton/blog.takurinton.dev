@@ -207,7 +207,6 @@ fn generate_rss(md_files: &[String]) {
 
 fn main() {
     let md_files = get_md_files();
-    copy_dir("./styles", "styles");
     copy_dir("./scripts", "scripts");
     generate_posts(&md_files);
     generate_post(&md_files);

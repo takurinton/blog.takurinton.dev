@@ -10,6 +10,19 @@ pub struct DocumentProps {
 }
 
 pub fn document(props: DocumentProps) -> String {
+    // コンポーネント CSS を先に回収（body_content レンダリング時に登録済み）
+    let component_css = crate::style::collect_and_clear();
+    // グローバルスタイルを登録して回収
+    crate::global_styles::inject_global_styles();
+    let global_css = crate::style::collect_and_clear();
+
+    let injected_style = if global_css.is_empty() && component_css.is_empty() {
+        String::new()
+    } else {
+        // グローバル（:root 等）を先に出力し、コンポーネント CSS を後に
+        format!("<style>{}\n{}</style>", global_css, component_css)
+    };
+
     let hljs_css = if props.include_hljs {
         render! {
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"></link>
@@ -70,7 +83,7 @@ pub fn document(props: DocumentProps) -> String {
                     href="https://takurinton.dev/favicon.ico"
                     type="image/x-icon"
                 ></link>
-                <link rel="stylesheet" href="/styles/style.css"></link>
+                {injected_style}
                 {hljs_css}
                 <meta name="twitter:card" content="summary"></meta>
                 {og_title_meta}

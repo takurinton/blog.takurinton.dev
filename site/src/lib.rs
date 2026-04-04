@@ -1,9 +1,13 @@
+pub mod global_styles;
+
 #[cfg(not(target_arch = "wasm32"))]
 pub mod components;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod pages;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod routes;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod style;
 
 #[cfg(target_arch = "wasm32")]
 mod og;
@@ -11,6 +15,7 @@ mod og;
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen::prelude::wasm_bindgen(start)]
 pub fn boot() {
+    global_styles::inject_global_styles();
     let doc = web_sys::window().unwrap().document().unwrap();
     let r = wasm::Router::new()
         .with_cache(wasm::PageCache::new())
