@@ -263,7 +263,60 @@ fn apply_html(html: &str) {
         doc.set_title(&new_title.text_content().unwrap_or_default());
     }
 
+    // 遷移先ページの <style> タグを現在の <head> にマージ
+    sync_styles(&doc, &new_doc);
+
     let _ = js_sys::eval("if(typeof hljs !== 'undefined') hljs.highlightAll()");
+}
+
+/// 遷移先の <style> タグを現在の <head> にマージする。
+/// ID 付きの style タグは重複チェック、ID なしは内容ベースで重複���ェック。
+fn sync_styles(doc: &Document, new_doc: &Document) {
+    let head = match doc.head() {
+        Some(h) => h,
+        None => return,
+    };
+
+    let new_styles = new_doc.query_selector_all("style").unwrap();
+    let len = new_styles.length();
+
+    for i in 0..len {
+        let new_style = match new_styles.item(i) {
+            Some(el) => el,
+            None => continue,
+        };
+        let new_style: Element = match new_style.dyn_into() {
+            Ok(el) => el,
+            Err(_) => continue,
+        };
+
+        let id = new_style
+            .dyn_ref::<Element>()
+            .and_then(|el| el.get_attribute("id"));
+
+        let already_exists = if let Some(ref id) = id {
+            // ID 付き: 同じ ID が既に head にあればスキップ
+            doc.get_element_by_id(id).is_some()
+        } else {
+            // ID なし: 同じ内容の style が既にあるかチェック
+            let new_content = new_style.text_content().unwrap_or_default();
+            let existing = doc.query_selector_all("head > style").unwrap();
+            let mut found = false;
+            for j in 0..existing.length() {
+                if let Some(el) = existing.item(j) {
+                    if el.text_content().unwrap_or_default() == new_content {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            found
+        };
+
+        if !already_exists {
+            let _ = head.append_child(&new_style);
+        }
+    }
 }
 
 fn save_scroll(scroll_cache: &ScrollCache, href: &str) {
