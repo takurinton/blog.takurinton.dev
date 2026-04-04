@@ -10,6 +10,8 @@ pub struct DocumentProps {
 }
 
 pub fn document(props: DocumentProps) -> String {
+    crate::global_styles::inject_global_styles();
+
     let injected_style = {
         let collected = crate::style::collect_and_clear();
         if collected.is_empty() {
@@ -79,7 +81,6 @@ pub fn document(props: DocumentProps) -> String {
                     href="https://takurinton.dev/favicon.ico"
                     type="image/x-icon"
                 ></link>
-                <link rel="stylesheet" href="/styles/style.css"></link>
                 {injected_style}
                 {hljs_css}
                 <meta name="twitter:card" content="summary"></meta>

@@ -12,9 +12,22 @@ pub fn post_list_item(id: &str, title: &str, created_at: &str, description: &str
     let post_cls = css! { margin-top: 24px; padding-bottom: 8px; border-bottom: 1.2px solid var(--color-border); };
     let date_cls = css! { font-size: 0.9rem; color: var(--color-text-muted); margin: 8px 0; };
     let desc_cls = css! { font-size: 1rem; margin: 16px 0; line-height: 1.6; };
+    let title_cls = css!(
+        "
+        font-weight: 700;
+        font-size: 1.4rem;
+        color: var(--color-text);
+        &:hover {
+            color: var(--color-primary);
+        }
+        @media screen and (max-width: 768px) {
+            font-size: 1.2rem;
+        }
+    "
+    );
     render! {
         <div class={post_cls}>
-            <a class="post-title" href={href}>{title}</a>
+            <a class={title_cls} href={href}>{title}</a>
             <p class={date_cls}>{created_at}</p>
             <p class={desc_cls}>{description}</p>
         </div>

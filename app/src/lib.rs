@@ -28,6 +28,11 @@ pub fn css(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     css::css_impl(input)
 }
 
+#[proc_macro]
+pub fn global_css(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    css::global_css_impl(input)
+}
+
 #[proc_macro_attribute]
 pub fn component(
     _attr: proc_macro::TokenStream,
