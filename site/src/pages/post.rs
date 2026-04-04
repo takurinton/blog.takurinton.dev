@@ -1,4 +1,4 @@
-use app::render;
+use app::{css, render};
 
 use crate::components::document::{document, DocumentProps};
 use crate::components::header::header;
@@ -11,10 +11,13 @@ pub fn post_page(
 ) -> String {
     let header = header();
 
+    let title_cls = css! { text-align: center; };
+    let date_cls = css! { text-align: right; color: var(--color-text-muted); };
+
     let body = render! {
         <div class="content">
-            <h1 class="title">{title.clone()}</h1>
-            <p class="date">{created_at}</p>
+            <h1 class={title_cls}>{title.clone()}</h1>
+            <p class={date_cls}>{created_at}</p>
             {content}
         </div>
     }
