@@ -10,15 +10,17 @@ pub struct DocumentProps {
 }
 
 pub fn document(props: DocumentProps) -> String {
+    // コンポーネント CSS を先に回収（body_content レンダリング時に登録済み）
+    let component_css = crate::style::collect_and_clear();
+    // グローバルスタイルを登録して回収
     crate::global_styles::inject_global_styles();
+    let global_css = crate::style::collect_and_clear();
 
-    let injected_style = {
-        let collected = crate::style::collect_and_clear();
-        if collected.is_empty() {
-            String::new()
-        } else {
-            format!("<style>{}</style>", collected)
-        }
+    let injected_style = if global_css.is_empty() && component_css.is_empty() {
+        String::new()
+    } else {
+        // グローバル（:root 等）を先に出力し、コンポーネント CSS を後に
+        format!("<style>{}\n{}</style>", global_css, component_css)
     };
 
     let hljs_css = if props.include_hljs {

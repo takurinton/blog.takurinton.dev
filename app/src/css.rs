@@ -158,15 +158,48 @@ fn generate_full_css(class_name: &str, parsed: &ParsedCss) -> String {
         parts.push(format!("{} {{ {} }}", selector, props));
     }
 
-    // Media blocks → @media query { .css-xxx { ... } }
-    for (query, props) in &parsed.media {
-        parts.push(format!(
-            "@media {} {{ .{} {{ {} }} }}",
-            query, class_name, props
-        ));
+    // Media blocks
+    for (query, content) in &parsed.media {
+        parts.push(generate_media_css(class_name, query, content));
     }
 
     parts.join("\n")
+}
+
+/// @media ブロックの CSS を生成する。
+/// content が単純なプロパティなら `.class { props }` でラップ。
+/// content にセレクタ付きルール（`{` を含む）があれば、各セレクタを `.class ` でプレフィックスする。
+fn generate_media_css(class_name: &str, query: &str, content: &str) -> String {
+    let content = content.trim();
+    if content.contains('{') {
+        // セレクタ付きルール: "code, pre, span { font-size: 0.8rem; }" など
+        let mut rules = String::new();
+        let mut remaining = content;
+        while let Some(brace_pos) = remaining.find('{') {
+            let selectors_str = remaining[..brace_pos].trim();
+            remaining = &remaining[brace_pos + 1..];
+            let close_pos = remaining.find('}').unwrap_or(remaining.len());
+            let props = remaining[..close_pos].trim();
+            remaining = if close_pos < remaining.len() {
+                remaining[close_pos + 1..].trim()
+            } else {
+                ""
+            };
+            // 各セレクタに .class をプレフ���ックス
+            let prefixed: Vec<String> = selectors_str
+                .split(',')
+                .map(|s| format!(".{} {}", class_name, s.trim()))
+                .collect();
+            if !rules.is_empty() {
+                rules.push('\n');
+            }
+            rules.push_str(&format!("{} {{ {} }}", prefixed.join(", "), props));
+        }
+        format!("@media {} {{ {} }}", query, rules)
+    } else {
+        // 単純なプロパティ
+        format!("@media {} {{ .{} {{ {} }} }}", query, class_name, content)
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -334,5 +367,24 @@ mod tests {
         let parsed = parse_css("& th, & td { padding: 8px; }");
         let css = generate_full_css("css-abc123", &parsed);
         assert!(css.contains(".css-abc123 th, .css-abc123 td { padding: 8px; }"));
+    }
+
+    #[test]
+    fn generate_media_with_selectors() {
+        let parsed =
+            parse_css("@media (max-width: 768px) { code, pre, span { font-size: 0.8rem; } }");
+        let css = generate_full_css("css-abc123", &parsed);
+        assert!(css.contains(
+            ".css-abc123 code, .css-abc123 pre, .css-abc123 span { font-size: 0.8rem; }"
+        ));
+        // クラスでラッ���するネストではなく、セレクタプ���フィックスになっていること
+        assert!(!css.contains(".css-abc123 { code"));
+    }
+
+    #[test]
+    fn generate_media_simple_props() {
+        let parsed = parse_css("@media (max-width: 768px) { font-size: 1.2rem; }");
+        let css = generate_full_css("css-abc123", &parsed);
+        assert!(css.contains("@media (max-width: 768px) { .css-abc123 { font-size: 1.2rem; } }"));
     }
 }
