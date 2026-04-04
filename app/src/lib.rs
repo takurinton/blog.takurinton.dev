@@ -2,6 +2,7 @@ extern crate proc_macro;
 
 mod codegen;
 mod component;
+mod css;
 mod tokenizer;
 
 use quote::quote;
@@ -20,6 +21,11 @@ pub fn render(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
         { #client }
     }}
     .into()
+}
+
+#[proc_macro]
+pub fn css(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    css::css_impl(input)
 }
 
 #[proc_macro_attribute]

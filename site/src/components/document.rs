@@ -10,6 +10,15 @@ pub struct DocumentProps {
 }
 
 pub fn document(props: DocumentProps) -> String {
+    let injected_style = {
+        let collected = crate::style::collect_and_clear();
+        if collected.is_empty() {
+            String::new()
+        } else {
+            format!("<style>{}</style>", collected)
+        }
+    };
+
     let hljs_css = if props.include_hljs {
         render! {
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"></link>
@@ -71,6 +80,7 @@ pub fn document(props: DocumentProps) -> String {
                     type="image/x-icon"
                 ></link>
                 <link rel="stylesheet" href="/styles/style.css"></link>
+                {injected_style}
                 {hljs_css}
                 <meta name="twitter:card" content="summary"></meta>
                 {og_title_meta}
