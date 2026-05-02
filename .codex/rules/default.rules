@@ -15,6 +15,18 @@
 # - Bash(xargs -I {} bash -c 'echo "=== {} ===" && head -20 {}')
 
 prefix_rule(
+    pattern = ["git"],
+    decision = "allow",
+    justification = "Migrated from .claude permission: git",
+)
+
+prefix_rule(
+    pattern = ["gh"],
+    decision = "allow",
+    justification = "Migrated from .claude permission: gh",
+)
+
+prefix_rule(
     pattern = ["gh", "api"],
     decision = "allow",
     justification = "Migrated from .claude permission: gh api",
@@ -60,12 +72,6 @@ prefix_rule(
     pattern = ["cargo", "check"],
     decision = "prompt",
     justification = "Migrated from .claude permission: cargo check",
-)
-
-prefix_rule(
-    pattern = ["git"],
-    decision = "allow",
-    justification = "Migrated from .claude permission: git",
 )
 
 prefix_rule(

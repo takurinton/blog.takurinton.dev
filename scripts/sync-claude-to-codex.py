@@ -204,6 +204,10 @@ def generate_rules(settings_local: dict) -> str:
     rules: list[list[str]] = []
     skipped: list[str] = []
 
+    for pattern in (["git"], ["gh"]):
+        seen.add(tuple(pattern))
+        rules.append(pattern)
+
     for entry in allow_entries:
         if not isinstance(entry, str):
             skipped.append(str(entry))
