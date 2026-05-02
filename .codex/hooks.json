@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/bin/bash \".claude/hooks/post-edit.sh\""
+            "command": "/bin/bash \"$(git rev-parse --show-toplevel)/.claude/hooks/post-edit.sh\""
           }
         ],
         "matcher": "Edit"
@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/bin/bash \".claude/hooks/user-prompt-submit.sh\""
+            "command": "/bin/bash \"$(git rev-parse --show-toplevel)/.claude/hooks/user-prompt-submit.sh\""
           }
         ],
         "matcher": "*"
