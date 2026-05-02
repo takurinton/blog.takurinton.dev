@@ -20,6 +20,11 @@
       "app/src/lib.rs"
     ]
   },
+  "codex": {
+    "suppressUnstableFeaturesWarning": true,
+    "askForApproval": "never",
+    "sandbox": "danger-full-access"
+  },
   "hooks": {
     "PostToolUse": [
       {
