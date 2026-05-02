@@ -89,7 +89,7 @@ def shell_quote(value: str) -> str:
 
 def normalize_hook_command(command: str) -> str:
     if command.startswith(".claude/hooks/"):
-        return f'/bin/bash "$(git rev-parse --show-toplevel)/{command}"'
+        return f'/bin/bash "{command}"'
     return command
 
 

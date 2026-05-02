@@ -17,9 +17,9 @@ mod og;
 pub fn boot() {
     global_styles::inject_global_styles();
     let doc = web_sys::window().unwrap().document().unwrap();
-    let r = wasm::Router::new()
-        .with_cache(wasm::PageCache::new())
-        .with_scroll_cache(wasm::ScrollCache::new())
+    let r = crustal_wasm::Router::new()
+        .with_cache(crustal_wasm::PageCache::new())
+        .with_scroll_cache(crustal_wasm::ScrollCache::new())
         .with_on_navigate(og::setup_og_cards);
     r.boot(&doc);
     og::setup_og_cards();

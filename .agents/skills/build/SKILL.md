@@ -14,7 +14,7 @@ description: ブログをビルドして dist/ に HTML を生成する
 cargo run -p generator
 
 # 2. WASM ビルド（SPA ルーター用）
-wasm-pack build wasm/ --target web --out-dir ../dist/scripts/pkg/
+wasm-pack build site --target web --out-dir ../dist/scripts/pkg/
 ```
 
 `cargo run` でも動作する（generator がデフォルトバイナリ）。
@@ -34,7 +34,7 @@ wasm-pack build wasm/ --target web --out-dir ../dist/scripts/pkg/
 2. `markdown` クレートでフロントマターをパース、本文をHTMLに変換
 3. `app` クレートの `render!` proc-macro で HTML テンプレートを生成（SSR パス）
 4. `dist/` に書き出す
-5. `wasm-pack` で `wasm/` クレートを WASM にコンパイル → `dist/scripts/pkg/` に出力
+5. `wasm-pack` で `site` クレートを WASM にコンパイル → `dist/scripts/pkg/` に出力
 6. ブラウザで `wasm-boot.js` が WASM をロードし SPA ルーターを起動
 
 ## エラー時の対処

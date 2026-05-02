@@ -7,10 +7,10 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-app = { path = "../app" }
+crustal-macros = { git = "https://github.com/takurinton/crustal.git" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm = { path = "../wasm" }
+crustal-wasm = { git = "https://github.com/takurinton/crustal.git" }
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
 js-sys = "0.3"

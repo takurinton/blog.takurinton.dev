@@ -1,4 +1,4 @@
-use app::{css, render};
+use crustal_macros::{css, render};
 
 use crate::components::document::{document, DocumentProps};
 use crate::components::header::header;

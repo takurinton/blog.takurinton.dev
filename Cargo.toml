@@ -1,9 +1,7 @@
 [workspace]
+resolver = "2"
 
 members = [
-    "markdown",
     "generator",
-    "app",
-    "wasm",
     "site"
 ]

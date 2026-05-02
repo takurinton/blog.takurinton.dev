@@ -1,4 +1,4 @@
-use app::global_css;
+use crustal_macros::global_css;
 
 pub fn inject_global_styles() {
     global_css!(

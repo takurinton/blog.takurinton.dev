@@ -6,5 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-markdown = { path = "../markdown" }
+crustal-blog-utils = { git = "https://github.com/takurinton/crustal.git" }
+crustal-markdown = { git = "https://github.com/takurinton/crustal.git" }
 site = { path = "../site" }

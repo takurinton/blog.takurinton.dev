@@ -1,4 +1,4 @@
-use app::render;
+use crustal_macros::render;
 
 pub struct DocumentProps {
     pub title: String,
